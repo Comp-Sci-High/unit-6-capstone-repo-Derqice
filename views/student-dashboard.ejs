@@ -1,0 +1,235 @@
+<%
+// ── Sample data (replace with real DB queries in your controller) ──
+const student = typeof user !== 'undefined' ? user : { name: 'Alex Rivera', level: 'B1', avatar: null };
+
+const readingList = typeof articles !== 'undefined' ? articles : [
+  { id: 1, title: 'How Computers Understand Language',      source: 'MIT Technology Review', level: 'B1', levelLabel: 'Intermediate', progress: 72, savedAt: '2 days ago' },
+  { id: 2, title: 'The History of the Internet in Brief',  source: 'Wikipedia',              level: 'A2', levelLabel: 'Elementary',   progress: 30, savedAt: '4 days ago' },
+  { id: 3, title: 'What is Machine Learning?',             source: 'BBC Future',              level: 'A1', levelLabel: 'Novice',       progress: 100, savedAt: '1 week ago' },
+  { id: 4, title: 'Sorting Algorithms Explained Simply',   source: 'CS Fundamentals Blog',   level: 'B2', levelLabel: 'Advanced',     progress: 0,  savedAt: 'Just now' },
+];
+
+const vocabBank = typeof vocab !== 'undefined' ? vocab : [
+  { word: 'Algorithm',   definition: 'A step-by-step set of rules to solve a problem.' },
+  { word: 'Recursion',   definition: 'When a function calls itself to solve a smaller version of the same problem.' },
+  { word: 'Binary',      definition: 'A number system using only 0s and 1s.' },
+  { word: 'Compile',     definition: 'To translate code into a form the computer can run.' },
+  { word: 'Iterate',     definition: 'To repeat a process multiple times, often with slight changes.' },
+  { word: 'Parameter',   definition: 'A value you pass into a function so it can do its work.' },
+];
+
+const levelBadge = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-intermediate', B2: 'badge-advanced' };
+%>
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+  <!-- ── Page Header ── -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div>
+      <p class="text-xs text-[#002115]/40 uppercase tracking-widest font-medium mb-0.5">Student Portal</p>
+      <h1 class="font-display font-bold text-3xl text-[#002115]">
+        Hello, <%= student.name.split(' ')[0] %> 👋
+      </h1>
+      <p class="text-sm text-[#002115]/50 mt-1">
+        Your current level:
+        <span class="<%= levelBadge[student.level] || 'badge-intermediate' %> text-xs font-semibold px-2.5 py-0.5 rounded-full ml-1">
+          <%= student.level %>
+        </span>
+      </p>
+    </div>
+    <a href="/"
+       class="inline-flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-card hover:shadow-lift transition-all duration-200 active:scale-95 self-start sm:self-auto">
+      <i data-lucide="plus" class="w-4 h-4 text-[#3ecf8e]"></i> Simplify New Article
+    </a>
+  </div>
+
+  <!-- ── Stats strip ── -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+    <%
+    const stats = [
+      { icon: 'book-open', label: 'Articles Read',   value: '14',   sub: '+2 this week' },
+      { icon: 'brain',     label: 'Vocab Words',      value: String(vocabBank.length), sub: 'in your bank' },
+      { icon: 'flame',     label: 'Day Streak',       value: '7',    sub: 'Keep it up!' },
+      { icon: 'trophy',    label: 'Level Progress',   value: '68%',  sub: 'Toward B2'  },
+    ];
+    %>
+    <% stats.forEach(s => { %>
+    <div class="bg-white rounded-2xl border border-[#e8e4dc] p-5 shadow-card flex items-center gap-4">
+      <div class="w-10 h-10 rounded-xl bg-[#002115] flex items-center justify-center flex-shrink-0">
+        <i data-lucide="<%= s.icon %>" class="w-5 h-5 text-[#3ecf8e]"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-display font-bold text-[#002115] leading-tight"><%= s.value %></p>
+        <p class="text-xs text-[#002115]/50"><%= s.label %></p>
+        <p class="text-[10px] text-[#3ecf8e] font-medium"><%= s.sub %></p>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- ── Two-column layout: Reading List + Vocab Bank ── -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- ════ My Reading List (2/3 width) ════ -->
+    <div class="lg:col-span-2">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="font-display font-semibold text-xl text-[#002115] flex items-center gap-2">
+          <i data-lucide="library" class="w-5 h-5 text-[#3ecf8e]"></i>
+          My Reading List
+        </h2>
+        <span class="text-xs text-[#002115]/40"><%= readingList.length %> articles</span>
+      </div>
+
+      <div class="space-y-4">
+        <% readingList.forEach(article => { %>
+        <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card hover:shadow-lift transition-all duration-200 overflow-hidden group">
+          <div class="p-5">
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                  <span class="<%= levelBadge[article.level] %> text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0">
+                    <%= article.levelLabel %> · <%= article.level %>
+                  </span>
+                  <% if (article.progress === 100) { %>
+                  <span class="flex items-center gap-1 text-[10px] font-medium text-[#3ecf8e]">
+                    <i data-lucide="check-circle" class="w-3 h-3"></i> Complete
+                  </span>
+                  <% } %>
+                </div>
+                <h3 class="font-display font-semibold text-[#002115] text-base leading-snug truncate"><%= article.title %></h3>
+                <p class="text-xs text-[#002115]/40 mt-0.5 flex items-center gap-1">
+                  <i data-lucide="globe" class="w-3 h-3"></i>
+                  <%= article.source %> &middot; Saved <%= article.savedAt %>
+                </p>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <% if (article.progress > 0 && article.progress < 100) { %>
+            <div class="mb-4">
+              <div class="flex items-center justify-between text-xs text-[#002115]/40 mb-1">
+                <span>Progress</span><span><%= article.progress %>%</span>
+              </div>
+              <div class="w-full h-1.5 bg-[#e8e4dc] rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-[#3ecf8e] to-[#22a06b] rounded-full transition-all"
+                     style="width: <%= article.progress %>%"></div>
+              </div>
+            </div>
+            <% } %>
+
+            <!-- Action Row -->
+            <div class="flex items-center gap-2 mt-3">
+              <% if (article.progress === 100) { %>
+              <a href="/article/<%= article.id %>"
+                 class="flex-1 flex items-center justify-center gap-1.5 bg-[#f8f6f0] hover:bg-[#e8e4dc] text-[#002115]/70 text-xs font-medium px-4 py-2.5 rounded-xl transition-colors duration-200">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Re-read
+              </a>
+              <% } else { %>
+              <a href="/article/<%= article.id %>"
+                 class="flex-1 flex items-center justify-center gap-1.5 bg-[#002115] hover:bg-[#001a10] text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors duration-200">
+                <i data-lucide="play" class="w-3.5 h-3.5 text-[#3ecf8e]"></i>
+                <%= article.progress === 0 ? 'Start Reading' : 'Continue' %>
+              </a>
+              <% } %>
+
+              <button type="button"
+                      class="flex items-center justify-center w-9 h-9 rounded-xl border border-[#e8e4dc] hover:border-[#f87171] hover:bg-[#fff1f2] text-[#002115]/30 hover:text-[#f87171] transition-all duration-200"
+                      title="Remove from library"
+                      onclick="removeArticle(<%= article.id %>)">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+
+        <% if (!readingList.length) { %>
+        <div class="text-center py-16 text-[#002115]/30">
+          <i data-lucide="book-open" class="w-10 h-10 mx-auto mb-3 opacity-30"></i>
+          <p class="font-display text-lg">Your library is empty.</p>
+          <p class="text-sm mt-1">Go simplify your first article!</p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- ════ Vocab Bank Sidebar (1/3 width) ════ -->
+    <div class="lg:col-span-1">
+      <div class="sticky top-24">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-display font-semibold text-xl text-[#002115] flex items-center gap-2">
+            <i data-lucide="book-marked" class="w-5 h-5 text-[#3ecf8e]"></i>
+            Vocab Bank
+          </h2>
+          <span class="text-xs bg-[#3ecf8e]/15 text-[#002115]/60 px-2.5 py-1 rounded-full font-medium">
+            <%= vocabBank.length %> words
+          </span>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden">
+          <!-- Search vocab -->
+          <div class="p-4 border-b border-[#e8e4dc]">
+            <div class="relative">
+              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#002115]/30"></i>
+              <input type="text" id="vocab-search" placeholder="Search words…"
+                     class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-xs text-[#002115] placeholder-[#002115]/30 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+            </div>
+          </div>
+
+          <!-- Word list -->
+          <ul id="vocab-list" class="divide-y divide-[#e8e4dc] max-h-[480px] overflow-y-auto">
+            <% vocabBank.forEach((v, i) => { %>
+            <li class="vocab-item px-5 py-4 hover:bg-[#f8f6f0] transition-colors group" data-word="<%= v.word.toLowerCase() %>">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="font-mono text-[10px] text-[#3ecf8e] font-medium">#<%= String(i+1).padStart(2,'0') %></span>
+                    <span class="font-display font-semibold text-sm text-[#002115]"><%= v.word %></span>
+                  </div>
+                  <p class="text-xs text-[#002115]/55 leading-relaxed"><%= v.definition %></p>
+                </div>
+                <button class="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-[#fff1f2] text-[#002115]/20 hover:text-[#f87171] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 duration-200"
+                        title="Remove word" onclick="removeWord(this, '<%= v.word %>')">
+                  <i data-lucide="x" class="w-3 h-3"></i>
+                </button>
+              </div>
+            </li>
+            <% }) %>
+          </ul>
+
+          <!-- Footer -->
+          <div class="px-5 py-3.5 bg-[#f8f6f0] border-t border-[#e8e4dc]">
+            <a href="/vocab-export" class="flex items-center gap-1.5 text-xs text-[#002115]/50 hover:text-[#002115] transition-colors">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-[#3ecf8e]"></i>
+              Export as Flashcards
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // Vocab search filter
+  document.getElementById('vocab-search').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.vocab-item').forEach(el => {
+      el.style.display = el.dataset.word.includes(q) ? '' : 'none';
+    });
+  });
+
+  function removeWord(btn, word) {
+    if (!confirm(`Remove "${word}" from your Vocab Bank?`)) return;
+    fetch('/vocab/remove', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ word }) })
+      .then(() => btn.closest('li').remove());
+  }
+
+  function removeArticle(id) {
+    if (!confirm('Remove this article from your library?')) return;
+    fetch('/library/remove', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ id }) })
+      .then(() => location.reload());
+  }
+</script>

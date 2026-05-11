@@ -1,0 +1,106 @@
+<div class="min-h-[calc(100vh-130px)] flex items-center justify-center px-4 py-16 bg-[#f8f6f0]">
+
+  <!-- Background decoration -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#3ecf8e]/5 blur-3xl"></div>
+    <div class="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-[#002115]/5 blur-3xl"></div>
+  </div>
+
+  <div class="relative w-full max-w-md">
+
+    <!-- ── Logo lockup ── -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#002115] shadow-lift mb-4 overflow-hidden">
+        <img src="/images/scholar-snake.svg" alt="Scholar Snake"
+             class="w-12 h-12 object-contain"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+        <span style="display:none" class="text-2xl">🐍</span>
+      </div>
+      <h1 class="font-display font-bold text-3xl text-[#002115]">The Dial</h1>
+      <p class="text-sm text-[#002115]/50 mt-1 tracking-widest uppercase font-body font-medium">
+        CompSciHigh Language Platform
+      </p>
+    </div>
+
+    <!-- ── Login Card ── -->
+    <div class="bg-white rounded-2xl shadow-lift border border-[#e8e4dc] overflow-hidden">
+
+      <!-- Card top band -->
+      <div class="h-1.5 bg-gradient-to-r from-[#002115] via-[#3ecf8e] to-[#002115]"></div>
+
+      <div class="px-8 py-8">
+        <h2 class="font-display font-semibold text-xl text-[#002115] mb-1">Welcome Back</h2>
+        <p class="text-sm text-[#002115]/50 mb-8 leading-relaxed">
+          Sign in with your <span class="font-semibold text-[#002115]/70">CompSciHigh</span> Google account
+          (<code class="font-mono text-xs bg-[#f0ede6] px-1.5 py-0.5 rounded">@compsci.edu</code>) to access your reading library and vocabulary bank.
+        </p>
+
+        <!-- Google Sign-In Button -->
+        <a href="/auth/google"
+           class="flex items-center justify-center gap-3 w-full py-3.5 px-6 bg-white border-2 border-[#002115]/15 hover:border-[#3ecf8e] hover:shadow-card rounded-xl text-sm font-semibold text-[#002115] transition-all duration-200 group">
+          <!-- Google "G" SVG -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 48 48">
+            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.5 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
+            <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.3 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8H6.3C9.7 35.7 16.3 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.3 4.1-4.1 5.4l6.2 5.2C43.2 35.3 46 30.2 46 24c0-1.2-.1-2.4-.4-3.5z"/>
+          </svg>
+          <span class="group-hover:text-[#002115]">Sign in with Google</span>
+        </a>
+
+        <!-- Divider -->
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-[#e8e4dc]"></div></div>
+          <div class="relative flex justify-center"><span class="bg-white px-3 text-xs text-[#002115]/30">or</span></div>
+        </div>
+
+        <!-- Email form (future implementation) -->
+        <form method="POST" action="/auth/login" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-[#002115]/60 mb-1.5" for="email">School Email</label>
+            <input id="email" name="email" type="email" placeholder="you@compsci.edu" required
+                   class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] placeholder-[#002115]/30 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all duration-200" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#002115]/60 mb-1.5" for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="••••••••" required
+                   class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] placeholder-[#002115]/30 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all duration-200" />
+          </div>
+          <div class="flex items-center justify-between">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="remember" class="w-4 h-4 rounded border-[#e8e4dc] text-[#3ecf8e] focus:ring-[#3ecf8e]" />
+              <span class="text-xs text-[#002115]/50">Remember me</span>
+            </label>
+            <a href="/forgot-password" class="text-xs text-[#3ecf8e] hover:underline">Forgot password?</a>
+          </div>
+          <button type="submit"
+                  class="w-full flex items-center justify-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white font-semibold text-sm py-3.5 rounded-xl transition-all duration-200 active:scale-95">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+            Sign In
+          </button>
+        </form>
+      </div>
+
+      <!-- Card footer -->
+      <div class="px-8 py-5 bg-[#f8f6f0] border-t border-[#e8e4dc] flex items-center justify-between">
+        <div class="flex items-center gap-1.5 text-xs text-[#002115]/40">
+          <i data-lucide="shield" class="w-3.5 h-3.5 text-[#3ecf8e]"></i>
+          Restricted to CompSciHigh members
+        </div>
+        <a href="/help" class="text-xs text-[#3ecf8e] hover:underline flex items-center gap-1">
+          <i data-lucide="help-circle" class="w-3 h-3"></i> Need help?
+        </a>
+      </div>
+    </div>
+
+    <!-- Terms note -->
+    <p class="text-center text-xs text-[#002115]/30 mt-6 leading-relaxed">
+      By signing in, you agree to CompSciHigh's
+      <a href="/terms" class="underline hover:text-[#002115]/60">Terms of Use</a> and
+      <a href="/privacy" class="underline hover:text-[#002115]/60">Privacy Policy</a>.
+    </p>
+
+  </div>
+</div>
+
+<script>lucide.createIcons();</script>

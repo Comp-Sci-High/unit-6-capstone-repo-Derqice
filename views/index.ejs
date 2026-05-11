@@ -1,0 +1,179 @@
+<!-- Hero Section -->
+<section class="relative overflow-hidden bg-[#002115]">
+  <!-- Decorative background grid -->
+  <div class="absolute inset-0 opacity-5"
+       style="background-image: linear-gradient(#3ecf8e 1px, transparent 1px), linear-gradient(90deg, #3ecf8e 1px, transparent 1px); background-size: 40px 40px;"></div>
+  <!-- Gradient fade at bottom -->
+  <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-[#f8f6f0]"></div>
+
+  <div class="relative max-w-4xl mx-auto px-6 pt-20 pb-32 text-center">
+    <!-- Eyebrow label -->
+    <div class="inline-flex items-center gap-2 bg-[#3ecf8e]/15 border border-[#3ecf8e]/30 rounded-full px-4 py-1.5 mb-6">
+      <span class="w-2 h-2 rounded-full bg-[#3ecf8e] animate-pulse"></span>
+      <span class="text-[#3ecf8e] text-xs font-medium tracking-widest uppercase">Language Simplification Tool</span>
+    </div>
+
+    <h1 class="text-5xl md:text-6xl font-display font-bold text-white leading-tight mb-5">
+      Turn Any Text Into<br />
+      <span class="text-[#3ecf8e]">Your Level.</span>
+    </h1>
+    <p class="text-white/60 text-lg max-w-xl mx-auto font-body font-light leading-relaxed">
+      Paste a URL or raw text below, set your reading level, and let The Dial rewrite it just for you.
+    </p>
+  </div>
+</section>
+
+<!-- ─── Main Input Card ─────────────────────────────────────────── -->
+<section class="max-w-3xl mx-auto px-6 -mt-16 relative z-10 pb-20">
+  <div class="bg-white rounded-2xl shadow-lift border border-[#e8e4dc] overflow-hidden">
+
+    <!-- Card Header -->
+    <div class="px-8 pt-7 pb-5 border-b border-[#e8e4dc]">
+      <h2 class="text-xl font-display font-semibold text-[#002115]">Paste Your Content</h2>
+      <p class="text-sm text-[#002115]/50 mt-0.5">Enter a URL (e.g. <code class="font-mono bg-[#f0ede6] px-1.5 py-0.5 rounded text-xs">https://bbc.co.uk/article</code>) or paste raw text directly.</p>
+    </div>
+
+    <form method="POST" action="/simplify" class="px-8 py-7 space-y-8">
+
+      <!-- ── Text Area ── -->
+      <div class="relative">
+        <textarea
+          id="content-input"
+          name="content"
+          rows="7"
+          placeholder="Paste a URL or text here…"
+          required
+          class="w-full resize-none rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] px-5 py-4 text-[#002115] text-sm font-body placeholder-[#002115]/30 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all duration-200 leading-relaxed"
+        ></textarea>
+        <!-- Character count -->
+        <span id="char-count" class="absolute bottom-3 right-4 text-xs text-[#002115]/30 font-mono">0 chars</span>
+      </div>
+
+      <!-- ── Difficulty Slider ── -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <label class="text-sm font-medium text-[#002115] flex items-center gap-1.5">
+            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-[#3ecf8e]"></i>
+            Reading Level
+          </label>
+          <span id="level-badge"
+                class="badge-novice text-xs font-semibold px-3 py-1 rounded-full transition-colors duration-300">
+            Novice &mdash; A1
+          </span>
+        </div>
+
+        <input
+          type="range"
+          id="difficulty-slider"
+          name="level"
+          min="1" max="4" value="1" step="1"
+          class="mb-4"
+          style="--pct: 0%"
+        />
+
+        <!-- Tick labels -->
+        <div class="grid grid-cols-4 text-center text-xs font-medium text-[#002115]/50 select-none">
+          <div class="flex flex-col items-center gap-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#3ecf8e] mb-0.5 mx-auto"></span>
+            <span>Novice</span>
+            <span class="font-mono text-[10px] text-[#002115]/30">A1</span>
+          </div>
+          <div class="flex flex-col items-center gap-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#60a5fa] mb-0.5 mx-auto"></span>
+            <span>Elementary</span>
+            <span class="font-mono text-[10px] text-[#002115]/30">A2</span>
+          </div>
+          <div class="flex flex-col items-center gap-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#fbbf24] mb-0.5 mx-auto"></span>
+            <span>Intermediate</span>
+            <span class="font-mono text-[10px] text-[#002115]/30">B1</span>
+          </div>
+          <div class="flex flex-col items-center gap-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#f87171] mb-0.5 mx-auto"></span>
+            <span>Advanced</span>
+            <span class="font-mono text-[10px] text-[#002115]/30">B2</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Options Row ── -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
+        <label class="flex items-center gap-2.5 cursor-pointer group">
+          <div class="relative">
+            <input type="checkbox" name="save_to_library" value="1" class="sr-only peer" />
+            <div class="w-10 h-5 bg-[#e8e4dc] rounded-full peer-checked:bg-[#3ecf8e] transition-colors duration-200"></div>
+            <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 peer-checked:translate-x-5"></div>
+          </div>
+          <span class="text-sm text-[#002115]/70 group-hover:text-[#002115] transition-colors">Save to My Library</span>
+        </label>
+
+        <!-- GO Button -->
+        <button type="submit"
+                class="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#002115] hover:bg-[#001a10] active:scale-95 text-white font-semibold text-sm px-8 py-3.5 rounded-xl shadow-card hover:shadow-lift transition-all duration-200">
+          <i data-lucide="zap" class="w-4 h-4 text-[#3ecf8e]"></i>
+          Simplify Now
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Trust strip -->
+  <div class="mt-6 flex items-center justify-center gap-6 text-xs text-[#002115]/40">
+    <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#3ecf8e]"></i> Private &amp; Secure</span>
+    <span class="flex items-center gap-1.5"><i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-[#3ecf8e]"></i> Built for CompSciHigh</span>
+    <span class="flex items-center gap-1.5"><i data-lucide="languages" class="w-3.5 h-3.5 text-[#3ecf8e]"></i> CEFR Aligned</span>
+  </div>
+</section>
+
+<!-- ─── How It Works ─────────────────────────────────────────────── -->
+<section class="bg-white border-t border-[#e8e4dc] py-16">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-2xl font-display font-semibold text-[#002115] text-center mb-10">How The Dial Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <% const steps = [
+        { icon: 'clipboard-paste', num: '01', title: 'Paste Content',      desc: 'Drop in a URL or any block of text—articles, textbooks, news, anything.' },
+        { icon: 'sliders-horizontal', num: '02', title: 'Set Your Level', desc: 'Drag the dial from Novice to Advanced to match your current CEFR level.' },
+        { icon: 'sparkles',          num: '03', title: 'Read & Learn',     desc: 'Get a clean, rewritten version with unfamiliar words added to your Vocab Bank.' },
+      ]; %>
+      <% steps.forEach(s => { %>
+      <div class="flex flex-col items-start p-6 rounded-2xl bg-[#f8f6f0] border border-[#e8e4dc] hover:shadow-card transition-shadow">
+        <div class="w-10 h-10 rounded-xl bg-[#002115] flex items-center justify-center mb-4">
+          <i data-lucide="<%= s.icon %>" class="w-5 h-5 text-[#3ecf8e]"></i>
+        </div>
+        <span class="font-mono text-xs text-[#3ecf8e] font-medium mb-1"><%= s.num %></span>
+        <h3 class="font-display font-semibold text-[#002115] mb-2"><%= s.title %></h3>
+        <p class="text-sm text-[#002115]/60 leading-relaxed"><%= s.desc %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<script>
+  lucide.createIcons();
+
+  // ── Slider logic ─────────────────────────────────────────────────
+  const slider   = document.getElementById('difficulty-slider');
+  const badge    = document.getElementById('level-badge');
+  const levels   = [
+    { label: 'Novice — A1',       cls: 'badge-novice',       pct: '0%'    },
+    { label: 'Elementary — A2',   cls: 'badge-elementary',   pct: '33.3%' },
+    { label: 'Intermediate — B1', cls: 'badge-intermediate', pct: '66.6%' },
+    { label: 'Advanced — B2',     cls: 'badge-advanced',     pct: '100%'  },
+  ];
+
+  slider.addEventListener('input', () => {
+    const idx = slider.value - 1;
+    const l = levels[idx];
+    badge.textContent = l.label;
+    badge.className   = l.cls + ' text-xs font-semibold px-3 py-1 rounded-full transition-colors duration-300';
+    slider.style.setProperty('--pct', l.pct);
+  });
+
+  // ── Char counter ─────────────────────────────────────────────────
+  const ta    = document.getElementById('content-input');
+  const count = document.getElementById('char-count');
+  ta.addEventListener('input', () => {
+    count.textContent = ta.value.length.toLocaleString() + ' chars';
+  });
+</script>

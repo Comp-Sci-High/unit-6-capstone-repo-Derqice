@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? title + ' · The Dial' : 'The Dial' %></title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            oxford:  { DEFAULT: '#002115', 50: '#e6efe9', 100: '#c2d9cb', 200: '#8ab8a0', 300: '#4d9470', 400: '#1a6b45', DEFAULT: '#002115', 700: '#001a10', 800: '#00120b', 900: '#000a06' },
+            mint:    { DEFAULT: '#3ecf8e', light: '#7eeab8', dark: '#22a06b' },
+            cream:   { DEFAULT: '#f8f6f0', 50: '#fdfcf9' },
+            slate2:  '#e8e4dc',
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', 'Georgia', 'serif'],
+            body:    ['"DM Sans"', 'system-ui', 'sans-serif'],
+            mono:    ['"JetBrains Mono"', 'monospace'],
+          },
+          boxShadow: {
+            card: '0 4px 24px rgba(0,33,21,0.08)',
+            lift: '0 8px 40px rgba(0,33,21,0.14)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    body { font-family: 'DM Sans', system-ui, sans-serif; background-color: #f8f6f0; color: #002115; }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: #3ecf8e; transition: width .25s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .badge-novice       { background: #d1fae5; color: #065f46; }
+    .badge-elementary   { background: #dbeafe; color: #1e40af; }
+    .badge-intermediate { background: #fef3c7; color: #92400e; }
+    .badge-advanced     { background: #ffe4e6; color: #9f1239; }
+    /* Custom slider */
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 9999px; background: linear-gradient(to right, #3ecf8e var(--pct, 33%), #c2d9cb var(--pct, 33%)); outline: none; cursor: pointer; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #002115; border: 3px solid #3ecf8e; box-shadow: 0 2px 8px rgba(0,33,21,.25); transition: transform .15s; }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ═══════════════════════════  NAVBAR  ═══════════════════════════ -->
+  <nav class="bg-[#002115] text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+
+      <!-- Brand -->
+      <a href="/" class="flex items-center gap-3 group">
+        <!-- Scholar Snake placeholder logo -->
+        <div class="w-10 h-10 rounded-xl bg-[#3ecf8e]/20 border border-[#3ecf8e]/40 flex items-center justify-center overflow-hidden">
+          <img src="/images/scholar-snake.svg" alt="Scholar Snake mascot"
+               class="w-8 h-8 object-contain opacity-90 group-hover:scale-110 transition-transform duration-200"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <!-- Fallback SVG snake icon if image missing -->
+          <span style="display:none" class="text-[#3ecf8e] text-lg">🐍</span>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="font-display font-bold text-lg tracking-tight text-white">The Dial</span>
+          <span class="text-[10px] text-[#3ecf8e] uppercase tracking-widest font-body font-medium">CompSciHigh</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/dashboard" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
+          <i data-lucide="library" class="w-4 h-4"></i> My Library
+        </a>
+        <a href="/settings" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
+          <i data-lucide="settings" class="w-4 h-4"></i> Settings
+        </a>
+        <form method="POST" action="/logout" class="inline">
+          <button type="submit" class="flex items-center gap-1.5 text-sm font-medium bg-[#3ecf8e]/15 hover:bg-[#3ecf8e]/30 text-[#3ecf8e] px-4 py-1.5 rounded-full transition-all duration-200 border border-[#3ecf8e]/30">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+          </button>
+        </form>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="md:hidden text-white/80 hover:text-white">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-6 py-4 space-y-3">
+      <a href="/dashboard" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
+        <i data-lucide="library" class="w-4 h-4"></i> My Library
+      </a>
+      <a href="/settings" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
+        <i data-lucide="settings" class="w-4 h-4"></i> Settings
+      </a>
+      <form method="POST" action="/logout">
+        <button type="submit" class="flex items-center gap-2 text-sm text-[#3ecf8e] py-1">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+        </button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════  MAIN CONTENT  ═══════════════════════════ -->
+  <main class="flex-1">
+    <%- body %>
+  </main>
+
+  <!-- ═══════════════════════════  FOOTER  ═══════════════════════════ -->
+  <footer class="bg-[#002115] text-white/60 mt-auto">
+    <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-[#3ecf8e] font-display font-semibold text-base">The Dial</span>
+        <span class="text-white/20">·</span>
+        <span>A CompSciHigh Language Tool</span>
+      </div>
+      <div class="flex items-center gap-6 text-xs">
+        <a href="/about"   class="hover:text-white transition-colors">About</a>
+        <a href="/privacy" class="hover:text-white transition-colors">Privacy</a>
+        <a href="/help"    class="hover:text-white transition-colors">Help</a>
+        <span class="text-white/30">© <%= new Date().getFullYear() %> CompSciHigh</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Init Lucide icons
+    lucide.createIcons();
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>
