@@ -79,17 +79,26 @@
 
       <!-- Desktop Nav Links -->
       <div class="hidden md:flex items-center gap-8">
-        <a href="/dashboard" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
-          <i data-lucide="library" class="w-4 h-4"></i> My Library
-        </a>
-        <a href="/settings" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
-          <i data-lucide="settings" class="w-4 h-4"></i> Settings
-        </a>
-        <form method="POST" action="/logout" class="inline">
-          <button type="submit" class="flex items-center gap-1.5 text-sm font-medium bg-[#3ecf8e]/15 hover:bg-[#3ecf8e]/30 text-[#3ecf8e] px-4 py-1.5 rounded-full transition-all duration-200 border border-[#3ecf8e]/30">
-            <i data-lucide="log-out" class="w-4 h-4"></i> Logout
-          </button>
-        </form>
+        <% if (user) { %>
+          <a href="/dashboard" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
+            <i data-lucide="library" class="w-4 h-4"></i> My Library
+          </a>
+          <a href="/settings" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
+            <i data-lucide="settings" class="w-4 h-4"></i> Settings
+          </a>
+          <form method="POST" action="/logout" class="inline">
+            <button type="submit" class="flex items-center gap-1.5 text-sm font-medium bg-[#3ecf8e]/15 hover:bg-[#3ecf8e]/30 text-[#3ecf8e] px-4 py-1.5 rounded-full transition-all duration-200 border border-[#3ecf8e]/30">
+              <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+            </button>
+          </form>
+        <% } else { %>
+          <a href="/login" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
+            <i data-lucide="log-in" class="w-4 h-4"></i> Sign In
+          </a>
+          <a href="/signup" class="flex items-center gap-1.5 text-sm font-medium bg-[#3ecf8e]/15 hover:bg-[#3ecf8e]/30 text-[#3ecf8e] px-4 py-1.5 rounded-full transition-all duration-200 border border-[#3ecf8e]/30">
+            <i data-lucide="user-plus" class="w-4 h-4"></i> Sign Up
+          </a>
+        <% } %>
       </div>
 
       <!-- Mobile Menu Button -->
@@ -100,17 +109,26 @@
 
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-6 py-4 space-y-3">
-      <a href="/dashboard" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
-        <i data-lucide="library" class="w-4 h-4"></i> My Library
-      </a>
-      <a href="/settings" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
-        <i data-lucide="settings" class="w-4 h-4"></i> Settings
-      </a>
-      <form method="POST" action="/logout">
-        <button type="submit" class="flex items-center gap-2 text-sm text-[#3ecf8e] py-1">
-          <i data-lucide="log-out" class="w-4 h-4"></i> Logout
-        </button>
-      </form>
+      <% if (user) { %>
+        <a href="/dashboard" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
+          <i data-lucide="library" class="w-4 h-4"></i> My Library
+        </a>
+        <a href="/settings" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
+          <i data-lucide="settings" class="w-4 h-4"></i> Settings
+        </a>
+        <form method="POST" action="/logout">
+          <button type="submit" class="flex items-center gap-2 text-sm text-[#3ecf8e] py-1">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+          </button>
+        </form>
+      <% } else { %>
+        <a href="/login" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
+          <i data-lucide="log-in" class="w-4 h-4"></i> Sign In
+        </a>
+        <a href="/signup" class="flex items-center gap-2 text-sm text-[#3ecf8e] py-1">
+          <i data-lucide="user-plus" class="w-4 h-4"></i> Sign Up
+        </a>
+      <% } %>
     </div>
   </nav>
 

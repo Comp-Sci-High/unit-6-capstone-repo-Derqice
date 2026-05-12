@@ -32,7 +32,7 @@
         <h2 class="font-display font-semibold text-xl text-[#002115] mb-1">Welcome Back</h2>
         <p class="text-sm text-[#002115]/50 mb-8 leading-relaxed">
           Sign in with your <span class="font-semibold text-[#002115]/70">CompSciHigh</span> Google account
-          (<code class="font-mono text-xs bg-[#f0ede6] px-1.5 py-0.5 rounded">@compsci.edu</code>) to access your reading library and vocabulary bank.
+          (<code class="font-mono text-xs bg-[#f0ede6] px-1.5 py-0.5 rounded">@compscihigh.org</code>) to access your reading library and vocabulary bank.
         </p>
 
         <!-- Google Sign-In Button -->
@@ -58,7 +58,7 @@
         <form method="POST" action="/auth/login" class="space-y-4">
           <div>
             <label class="block text-xs font-medium text-[#002115]/60 mb-1.5" for="email">School Email</label>
-            <input id="email" name="email" type="email" placeholder="you@compsci.edu" required
+            <input id="email" name="email" type="email" placeholder="you@compscihigh.org" required
                    class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] placeholder-[#002115]/30 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all duration-200" />
           </div>
           <div>
@@ -73,6 +73,22 @@
             </label>
             <a href="/forgot-password" class="text-xs text-[#3ecf8e] hover:underline">Forgot password?</a>
           </div>
+          <!-- Add this above the submit button in the email form -->
+<div>
+  <label class="block text-xs font-medium text-[#002115]/60 mb-2">Sign in as</label>
+  <div class="grid grid-cols-2 gap-3">
+    <label class="flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-[#e8e4dc] cursor-pointer has-[:checked]:border-[#3ecf8e] has-[:checked]:bg-[#3ecf8e]/5 transition-all">
+      <input type="radio" name="role" value="student" class="sr-only" checked />
+      <i data-lucide="graduation-cap" class="w-4 h-4 text-[#002115]/50"></i>
+      <span class="text-sm font-semibold text-[#002115]">Student</span>
+    </label>
+    <label class="flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-[#e8e4dc] cursor-pointer has-[:checked]:border-[#3ecf8e] has-[:checked]:bg-[#3ecf8e]/5 transition-all">
+      <input type="radio" name="role" value="teacher" class="sr-only" />
+      <i data-lucide="book-open" class="w-4 h-4 text-[#002115]/50"></i>
+      <span class="text-sm font-semibold text-[#002115]">Teacher</span>
+    </label>
+  </div>
+</div>
           <button type="submit"
                   class="w-full flex items-center justify-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white font-semibold text-sm py-3.5 rounded-xl transition-all duration-200 active:scale-95">
             <i data-lucide="log-in" class="w-4 h-4"></i>

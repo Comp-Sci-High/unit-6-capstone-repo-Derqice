@@ -1,0 +1,186 @@
+<%# ── home.ejs ── Public Landing Page (unauthenticated) ─────────────────── %>
+
+<!-- ═══════════════════════════  HERO  ═══════════════════════════ -->
+<section class="relative bg-[#002115] overflow-hidden">
+  <!-- Grid background -->
+  <div class="absolute inset-0 opacity-[0.06]"
+       style="background-image: linear-gradient(#3ecf8e 1px, transparent 1px), linear-gradient(90deg, #3ecf8e 1px, transparent 1px); background-size: 48px 48px;"></div>
+  <!-- Radial glow -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-[#3ecf8e]/10 blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-6xl mx-auto px-6 pt-24 pb-32 flex flex-col lg:flex-row items-center gap-16">
+
+    <!-- Left: copy -->
+    <div class="flex-1 text-center lg:text-left">
+      <div class="inline-flex items-center gap-2 bg-[#3ecf8e]/15 border border-[#3ecf8e]/25 rounded-full px-4 py-1.5 mb-7">
+        <span class="w-2 h-2 rounded-full bg-[#3ecf8e] animate-pulse"></span>
+        <span class="text-[#3ecf8e] text-xs font-medium tracking-widest uppercase">CompSciHigh · Language Tool</span>
+      </div>
+
+      <h1 class="font-display font-bold text-5xl md:text-6xl lg:text-7xl text-white leading-[1.08] mb-6">
+        Read Anything.<br />
+        <span class="text-[#3ecf8e]">At Your Level.</span>
+      </h1>
+
+      <p class="text-white/55 text-lg md:text-xl leading-relaxed max-w-lg mx-auto lg:mx-0 mb-10">
+        The Dial rewrites any article or URL to match your CEFR reading level — from Novice all the way to Advanced. Built exclusively for CompSciHigh students and faculty.
+      </p>
+
+      <!-- CTA buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+        <a href="/signup"
+           class="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#3ecf8e] hover:bg-[#22a06b] text-[#002115] font-bold text-base px-8 py-4 rounded-xl shadow-lift transition-all duration-200 active:scale-95">
+          <i data-lucide="user-plus" class="w-5 h-5"></i>
+          Create Account
+        </a>
+        <a href="/login"
+           class="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-semibold text-base px-8 py-4 rounded-xl transition-all duration-200">
+          <i data-lucide="log-in" class="w-5 h-5"></i>
+          Sign In
+        </a>
+      </div>
+
+      <!-- Social proof -->
+      <p class="mt-8 text-white/30 text-sm flex items-center justify-center lg:justify-start gap-2">
+        <i data-lucide="shield-check" class="w-4 h-4 text-[#3ecf8e]"></i>
+        Restricted to <span class="text-white/50 font-medium">@compscihigh.org</span> accounts
+      </p>
+    </div>
+
+    <!-- Right: mock UI card -->
+    <div class="flex-1 w-full max-w-md lg:max-w-none">
+      <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-lift backdrop-blur-sm">
+        <!-- Fake browser chrome -->
+        <div class="px-4 py-3 bg-white/5 border-b border-white/10 flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-red-400/60"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-400/60"></span>
+          <span class="w-3 h-3 rounded-full bg-green-400/60"></span>
+          <div class="flex-1 mx-4 bg-white/10 rounded-md px-3 py-1 text-xs text-white/30 font-mono">
+            thedial.compsci.edu
+          </div>
+        </div>
+        <!-- Mock content -->
+        <div class="p-6 space-y-4">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="badge-intermediate text-xs font-semibold px-2.5 py-1 rounded-full">Intermediate · B1</span>
+            <span class="text-white/30 text-xs">← drag to change</span>
+          </div>
+          <!-- Fake slider -->
+          <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full w-1/2 bg-gradient-to-r from-[#3ecf8e] to-[#22a06b] rounded-full"></div>
+          </div>
+          <!-- Fake text lines -->
+          <div class="space-y-2 pt-2">
+            <div class="h-3 bg-white/10 rounded-full w-full"></div>
+            <div class="h-3 bg-white/10 rounded-full w-5/6"></div>
+            <div class="h-3 bg-white/10 rounded-full w-full"></div>
+            <div class="h-3 bg-white/10 rounded-full w-4/6"></div>
+            <div class="h-3 bg-white/10 rounded-full w-full"></div>
+            <div class="h-3 bg-white/10 rounded-full w-3/4"></div>
+          </div>
+          <!-- Fake vocab highlight -->
+          <div class="mt-4 flex flex-wrap gap-2">
+            <% ['Algorithm','Recursion','Binary','Compile'].forEach(w => { %>
+            <span class="bg-[#3ecf8e]/20 border border-[#3ecf8e]/30 text-[#3ecf8e] text-xs px-2.5 py-1 rounded-full font-mono"><%= w %></span>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom fade -->
+  <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-[#f8f6f0]"></div>
+</section>
+
+<!-- ═══════════════════════════  FEATURES  ═══════════════════════════ -->
+<section class="max-w-6xl mx-auto px-6 py-20">
+  <div class="text-center mb-14">
+    <h2 class="font-display font-bold text-4xl text-[#002115] mb-3">Everything You Need to Read Better</h2>
+    <p class="text-[#002115]/50 text-lg max-w-xl mx-auto">One tool for students to grow, and teachers to track progress.</p>
+  </div>
+
+  <%
+  const features = [
+    { icon: 'sliders-horizontal', title: 'CEFR Difficulty Dial',    color: 'bg-emerald-50 text-emerald-700',  desc: 'Instantly rewrite any content from A1 Novice to B2 Advanced with a single slider.' },
+    { icon: 'book-marked',        title: 'Personal Vocab Bank',     color: 'bg-blue-50 text-blue-700',        desc: 'Every word you look up is saved automatically. Study your personal word list anytime.' },
+    { icon: 'library',            title: 'Reading Library',         color: 'bg-violet-50 text-violet-700',    desc: 'Save articles to your library and track reading progress across all your texts.' },
+    { icon: 'bar-chart-2',        title: 'Teacher Analytics',       color: 'bg-amber-50 text-amber-700',      desc: 'See which words your whole class struggles with and track weekly reading activity.' },
+    { icon: 'send',               title: 'Assign to Class',         color: 'bg-rose-50 text-rose-700',        desc: 'Teachers can push any article to every student in one click, with a due date and note.' },
+    { icon: 'shield-check',       title: 'School-Only Access',      color: 'bg-teal-50 text-teal-700',        desc: 'Locked to @compscihigh.org Google accounts. Safe, private, and FERPA-friendly.' },
+  ];
+  %>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% features.forEach(f => { %>
+    <div class="bg-white rounded-2xl border border-[#e8e4dc] p-6 shadow-card hover:shadow-lift transition-all duration-200 group">
+      <div class="w-11 h-11 rounded-xl <%= f.color %> flex items-center justify-center mb-4">
+        <i data-lucide="<%= f.icon %>" class="w-5 h-5"></i>
+      </div>
+      <h3 class="font-display font-semibold text-[#002115] text-lg mb-2"><%= f.title %></h3>
+      <p class="text-sm text-[#002115]/55 leading-relaxed"><%= f.desc %></p>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- ═══════════════════════════  HOW IT WORKS  ═══════════════════════════ -->
+<section class="bg-[#002115] py-20">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-14">
+      <h2 class="font-display font-bold text-4xl text-white mb-3">Up and Reading in 3 Steps</h2>
+      <p class="text-white/40 text-lg">No setup. No downloads. Just sign in and go.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
+      <!-- Connector line (desktop only) -->
+      <div class="hidden md:block absolute top-10 left-1/3 right-1/3 h-px bg-[#3ecf8e]/20"></div>
+
+      <%
+      const steps = [
+        { num: '01', icon: 'log-in',             title: 'Sign In',        desc: 'Log in with your CompSciHigh Google account. No new passwords to remember.' },
+        { num: '02', icon: 'clipboard-paste',     title: 'Paste & Dial',   desc: 'Drop in a URL or raw text, drag the difficulty slider to your level, hit Go.' },
+        { num: '03', icon: 'graduation-cap',      title: 'Read & Grow',    desc: 'Read your simplified article and watch unfamiliar words land in your Vocab Bank.' },
+      ];
+      %>
+      <% steps.forEach(s => { %>
+      <div class="relative flex flex-col items-center text-center p-6 rounded-2xl bg-white/5 border border-white/10">
+        <div class="w-12 h-12 rounded-full bg-[#3ecf8e] flex items-center justify-center mb-4 shadow-lg">
+          <i data-lucide="<%= s.icon %>" class="w-5 h-5 text-[#002115]"></i>
+        </div>
+        <span class="font-mono text-xs text-[#3ecf8e]/60 mb-1"><%= s.num %></span>
+        <h3 class="font-display font-semibold text-white text-lg mb-2"><%= s.title %></h3>
+        <p class="text-sm text-white/40 leading-relaxed"><%= s.desc %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════  FINAL CTA  ═══════════════════════════ -->
+<section class="max-w-3xl mx-auto px-6 py-24 text-center">
+  <div class="w-16 h-16 rounded-2xl bg-[#002115] flex items-center justify-center mx-auto mb-6 overflow-hidden shadow-lift">
+    <img src="/images/scholar-snake.svg" alt="Scholar Snake"
+         class="w-12 h-12 object-contain"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+    <span style="display:none" class="text-3xl">🐍</span>
+  </div>
+  <h2 class="font-display font-bold text-4xl text-[#002115] mb-4">Ready to Dial In?</h2>
+  <p class="text-[#002115]/50 text-lg mb-10 max-w-md mx-auto leading-relaxed">
+    Join your classmates on The Dial. Sign in with your school account and start reading smarter today.
+  </p>
+  <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+    <a href="/signup"
+       class="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white font-bold text-base px-10 py-4 rounded-xl shadow-lift hover:shadow-xl transition-all duration-200 active:scale-95">
+      <i data-lucide="user-plus" class="w-5 h-5 text-[#3ecf8e]"></i>
+      Get Started Free
+    </a>
+    <a href="/login"
+       class="w-full sm:w-auto flex items-center justify-center gap-2 border-2 border-[#002115]/15 hover:border-[#002115]/40 text-[#002115]/70 hover:text-[#002115] font-semibold text-base px-10 py-4 rounded-xl transition-all duration-200">
+      Already have an account? Sign in →
+    </a>
+  </div>
+</section>
+
+<script>lucide.createIcons();</script>

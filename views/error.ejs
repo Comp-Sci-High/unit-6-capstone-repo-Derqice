@@ -1,0 +1,104 @@
+<%# ── error.ejs ── 404 / Error Page ─────────────────────────────────────── %>
+
+<%
+const is404    = typeof statusCode === 'undefined' || statusCode === 404;
+const code     = typeof statusCode !== 'undefined' ? statusCode : 404;
+const headline = is404 ? 'Page Not Found' : 'Something Went Wrong';
+const sub      = typeof message !== 'undefined' && message
+                   ? message
+                   : is404
+                     ? 'This page hasn\'t been built yet — check back soon.'
+                     : 'An unexpected error occurred. Try again or head home.';
+
+// Pages that are planned but not yet built
+const comingSoon = [
+  { icon: 'flask-conical', label: 'Simplify Result',     href: '/simplify',           note: 'LLM output view'         },
+  { icon: 'user',          label: 'Settings',            href: '/settings',           note: 'Account preferences'     },
+  { icon: 'shield',        label: 'Admin Panel',         href: '/admin',              note: 'School-wide controls'    },
+  { icon: 'download',      label: 'Vocab Export',        href: '/vocab-export',       note: 'Flashcard download'      },
+  { icon: 'bar-chart-2',   label: 'Vocabulary Report',   href: '/teacher/vocabulary', note: 'Full word analytics'     },
+  { icon: 'mail',          label: 'Forgot Password',     href: '/forgot-password',    note: 'Password reset flow'     },
+];
+%>
+
+<div class="min-h-[calc(100vh-130px)] flex items-center justify-center px-6 py-20 bg-[#f8f6f0]">
+
+  <!-- Decorative blobs -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#3ecf8e]/5 blur-3xl"></div>
+  </div>
+
+  <div class="relative w-full max-w-2xl text-center">
+
+    <!-- Big code number -->
+    <div class="relative inline-block mb-6 select-none">
+      <span class="font-display font-bold text-[10rem] leading-none text-[#002115]/[0.04] tracking-tighter">
+        <%= code %>
+      </span>
+      <!-- Snake icon centered over the number -->
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-20 h-20 rounded-2xl bg-[#002115] shadow-lift flex items-center justify-center overflow-hidden">
+          <img src="/images/scholar-snake.svg" alt="Scholar Snake"
+               class="w-14 h-14 object-contain"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+          <span style="display:none" class="text-4xl">🐍</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="font-display font-bold text-4xl text-[#002115] mb-3"><%= headline %></h1>
+    <p class="text-[#002115]/50 text-base leading-relaxed max-w-md mx-auto mb-8"><%= sub %></p>
+
+    <!-- CTA buttons -->
+    <div class="flex items-center justify-center gap-3 flex-wrap mb-14">
+      <a href="/"
+         class="inline-flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-card hover:shadow-lift transition-all duration-200 active:scale-95">
+        <i data-lucide="home" class="w-4 h-4 text-[#3ecf8e]"></i>
+        Go Home
+      </a>
+      <a href="/dashboard"
+         class="inline-flex items-center gap-2 border border-[#002115]/15 hover:border-[#3ecf8e] text-[#002115]/70 hover:text-[#002115] text-sm font-medium px-6 py-3 rounded-xl transition-all duration-200">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        My Dashboard
+      </a>
+    </div>
+
+    <!-- ── Coming Soon Section ── -->
+    <% if (is404) { %>
+    <div class="text-left">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="h-px flex-1 bg-[#e8e4dc]"></div>
+        <p class="text-xs font-medium text-[#002115]/30 uppercase tracking-widest flex items-center gap-1.5">
+          <i data-lucide="clock" class="w-3.5 h-3.5"></i> Still Being Built
+        </p>
+        <div class="h-px flex-1 bg-[#e8e4dc]"></div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <% comingSoon.forEach(item => { %>
+        <div class="flex items-center gap-3 bg-white border border-[#e8e4dc] rounded-xl px-4 py-3.5 shadow-card opacity-70">
+          <div class="w-8 h-8 rounded-lg bg-[#f8f6f0] border border-[#e8e4dc] flex items-center justify-center flex-shrink-0">
+            <i data-lucide="<%= item.icon %>" class="w-4 h-4 text-[#002115]/40"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-medium text-[#002115]/70 truncate"><%= item.label %></p>
+            <p class="text-xs text-[#002115]/30 truncate"><%= item.note %></p>
+          </div>
+          <span class="ml-auto flex-shrink-0 text-[10px] font-semibold bg-amber-100 text-amber-600 px-2 py-0.5 rounded-full">
+            Soon
+          </span>
+        </div>
+        <% }) %>
+      </div>
+
+      <p class="text-center text-xs text-[#002115]/30 mt-5">
+        Need something urgently? Contact your CompSciHigh administrator.
+      </p>
+    </div>
+    <% } %>
+
+  </div>
+</div>
+
+<script>lucide.createIcons();</script>

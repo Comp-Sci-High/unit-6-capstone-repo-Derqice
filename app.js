@@ -1,3 +1,4 @@
+require('dotenv').config();
 // ─────────────────────────────────────────────────────────────────────────────
 //  app.js  ·  The Dial · CompSciHigh Language Simplification Tool
 //  Stack:  Node.js · Express · EJS · Tailwind CSS (CDN)
@@ -10,7 +11,6 @@ const session        = require('express-session');
 const morgan         = require('morgan');
 const mongoose        = require('mongoose');
 const app  = express();
-const PORT = process.env.PORT || 3000;
 
 // ── View Engine ────────────────────────────────────────────────────────────
 app.set('view engine', 'ejs');
@@ -27,10 +27,10 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-  secret:            process.env.SESSION_SECRET || 'dial-dev-secret-change-me',
+  secret:             || 'dial-dev-secret-change-me',
   resave:            false,
   saveUninitialized: false,
-  cookie:            { secure: process.env.NODE_ENV === 'production' },
+  cookie:            { secure:  === 'production' },
 }));
 
 // ── Global locals (available in every EJS template) ────────────────────────
@@ -56,7 +56,14 @@ function requireTeacher(req, res, next) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── Home / Landing ─────────────────────────────────────────────────────────
+// Public landing page — no auth required
 app.get('/', (req, res) => {
+  if (req.session.user) return res.redirect('/dashboard'); // skip landing if logged in
+  res.render('home', { title: 'Welcome' });
+});
+ 
+// The actual simplify tool — auth required
+app.get('/app', requireAuth, (req, res) => {
   res.render('index', { title: 'Home' });
 });
 
@@ -68,16 +75,15 @@ app.get('/login', (req, res) => {
 
 // Local login (demo – replace with real auth / Passport.js)
 app.post('/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  // TODO: validate against DB; below is a stub
-  const mockUser = email.endsWith('@compsci.edu')
-    ? { id: 1, name: 'Demo User', email, role: email.includes('teacher') ? 'teacher' : 'student', level: 'B1' }
-    : null;
+  const { email, role } = req.body;
 
-  if (!mockUser) {
-    return res.render('login', { title: 'Sign In', error: 'Invalid credentials or non-school email.' });
-  }
-  req.session.user = mockUser;
+  // Temporary: accept any email, use the role dropdown to switch views
+  req.session.user = {
+    name:  email.split('@')[0] || 'Test User',
+    email: email || 'test@compscihigh.org',
+    role:  role  || 'student',
+    level: 'B1',
+  };
   res.redirect('/dashboard');
 });
 
@@ -90,7 +96,46 @@ app.get('/auth/google', (req, res) => {
 app.post('/logout', (req, res) => {
   req.session.destroy(() => res.redirect('/login'));
 });
+// ── Signup ───────────────────────────────────────────────────────────────────
 
+app.get('/signup', (req, res) => {
+  if (req.session.user) return res.redirect('/dashboard');
+  res.render('signup', { title: 'Create Account' });
+});
+ 
+app.post('/auth/signup', async (req, res) => {
+  const { firstName, lastName, email, password, confirmPassword, role, level } = req.body;
+ 
+  // Basic server-side validation
+  if (!email.endsWith('@compscihigh.org')) {
+    return res.render('signup', { title: 'Create Account', error: 'You must use a @compscihigh.org email address.' });
+  }
+  if (password !== confirmPassword) {
+    return res.render('signup', { title: 'Create Account', error: 'Passwords do not match.' });
+  }
+  if (password.length < 8) {
+    return res.render('signup', { title: 'Create Account', error: 'Password must be at least 8 characters.' });
+  }
+ 
+  // TODO: Check if email already exists in DB
+  // const existing = await User.findOne({ email });
+  // if (existing) return res.render('signup', { title: 'Create Account', error: 'An account with that email already exists.' });
+ 
+  // TODO: Hash password and save user
+  // const hashed = await bcrypt.hash(password, 12);
+  // const user = await User.create({ firstName, lastName, email, password: hashed, role, level: role === 'student' ? level : null });
+ 
+  // Stub: log them straight in after signup
+  req.session.user = {
+    name:  `${firstName} ${lastName}`,
+    email,
+    role:  role || 'student',
+    level: role === 'student' ? (level || 'B1') : null,
+  };
+ 
+  res.redirect('/dashboard');
+});
+ 
 // ── Simplify (core feature) ────────────────────────────────────────────────
 app.post('/simplify', requireAuth, async (req, res) => {
   const { content, level, save_to_library } = req.body;
@@ -146,21 +191,22 @@ app.post('/teacher/assign', requireAuth, requireTeacher, async (req, res) => {
 
 // ── 404 catch-all ──────────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).render('error', { title: '404 Not Found', message: 'That page doesn\'t exist.' });
+  res.status(404).render('error', { title: '404 Not Found', message: "Look Somewhere Else" });
 });
 
-// ── Global error handler ───────────────────────────────────────────────────
+
+// ── 500 error handler ───────────────────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).render('error', { title: 'Server Error', message: 'Something went wrong.' });
+  res.status(500).render('error', { title: 'Server Error', message: 'Let me just fix that for you' });
 });
 
 // ── Start ──────────────────────────────────────────────────────────────────
 async function startServer() {
   await mongoose.connect();
-  app.listen(PORT, () => {
-    console.log(`\n🐍  The Dial is running  →  http://localhost:${PORT}\n`);
+  app.listen(3000, () => {
+    console.log(`\n🐍  The Dial is running  →  http://localhost:3000\n`);
   });
 }
-
+startServer();
 module.exports = app;
