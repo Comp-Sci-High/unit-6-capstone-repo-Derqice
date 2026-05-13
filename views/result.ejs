@@ -1,0 +1,78 @@
+<%# ── result.ejs ── Simplified Article Output ── %>
+
+<div class="max-w-4xl mx-auto px-6 py-12">
+
+  <!-- Header -->
+  <div class="mb-8">
+    <a href="/app" class="inline-flex items-center gap-1.5 text-sm text-[#002115]/40 hover:text-[#002115] transition-colors mb-4">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> Simplify another
+    </a>
+    <div class="flex items-center gap-3 flex-wrap mb-2">
+      <%
+        const badges = { A1:'badge-novice', A2:'badge-elementary', B1:'badge-intermediate', B2:'badge-advanced' };
+        const labels = { A1:'Novice', A2:'Elementary', B1:'Intermediate', B2:'Advanced' };
+      %>
+      <span class="<%= badges[level] %> text-xs font-semibold px-3 py-1 rounded-full">
+        <%= labels[level] %> · <%= level %>
+      </span>
+      <span class="bg-[#002115]/8 text-[#002115]/60 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+  <i data-lucide="languages" class="w-3 h-3"></i> <%= language %>
+</span>
+    </div>
+    <h1 class="font-display font-bold text-3xl text-[#002115]"><%= title %></h1>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- Article text -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card p-8">
+        <div class="prose prose-lg max-w-none text-[#002115]/80 leading-relaxed">
+          <% simplified.split('\n\n').forEach(para => { %>
+            <% if (para.trim()) { %>
+              <p class="mb-4 text-base leading-relaxed"><%= para.trim() %></p>
+            <% } %>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- Save button -->
+      <form method="POST" action="/library/save" class="mt-4">
+        <input type="hidden" name="title"     value="<%= title %>" />
+        <input type="hidden" name="content"   value="<%= original %>" />
+        <input type="hidden" name="simplified"value="<%= simplified %>" />
+        <input type="hidden" name="level"     value="<%= level %>" />
+        <button type="submit"
+                class="flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-card transition-all active:scale-95">
+          <i data-lucide="bookmark-plus" class="w-4 h-4 text-[#3ecf8e]"></i>
+          Save to My Library
+        </button>
+      </form>
+    </div>
+
+    <!-- Vocab Bank sidebar -->
+    <div>
+      <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden sticky top-24">
+        <div class="px-5 py-4 border-b border-[#e8e4dc] flex items-center gap-2">
+          <i data-lucide="book-marked" class="w-4 h-4 text-[#3ecf8e]"></i>
+          <h2 class="font-display font-semibold text-base text-[#002115]">Vocab from this Article</h2>
+        </div>
+        <ul class="divide-y divide-[#e8e4dc]">
+          <% if (vocab && vocab.length) { %>
+            <% vocab.forEach(v => { %>
+            <li class="px-5 py-4">
+              <p class="font-semibold text-sm text-[#002115] mb-0.5"><%= v.word %></p>
+              <p class="text-xs text-[#002115]/55 leading-relaxed"><%= v.definition %></p>
+            </li>
+            <% }) %>
+          <% } else { %>
+            <li class="px-5 py-8 text-center text-sm text-[#002115]/30">No vocab words found.</li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>lucide.createIcons();</script>

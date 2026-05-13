@@ -3,7 +3,9 @@ require('dotenv').config();
 //  app.js  ·  The Dial · CompSciHigh Language Simplification Tool
 //  Stack:  Node.js · Express · EJS · Tailwind CSS (CDN)
 // ─────────────────────────────────────────────────────────────────────────────
-
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const genAI = new GoogleGenerativeAI();
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }); // free tier
 const express        = require('express');
 const path           = require('path');
 const expressLayouts = require('express-ejs-layouts');
@@ -11,6 +13,12 @@ const session        = require('express-session');
 const morgan         = require('morgan');
 const mongoose        = require('mongoose');
 const app  = express();
+const LEVEL_PROMPTS = {
+  A1: 'Rewrite this text for a complete beginner (CEFR A1). Use only the most basic and common vocabulary. Write very short, simple sentences. Avoid all jargon and complex grammar.',
+  A2: 'Rewrite this text for an elementary reader (CEFR A2). Use simple vocabulary and short sentences. Explain any technical or complex terms in plain words.',
+  B1: 'Rewrite this text for an intermediate reader (CEFR B1). Use clear language and moderate vocabulary. You can keep some technical terms but briefly explain them.',
+  B2: 'Rewrite this text for an upper-intermediate reader (CEFR B2). Keep most of the original vocabulary but improve clarity and flow where needed.',
+};
 
 // ── View Engine ────────────────────────────────────────────────────────────
 app.set('view engine', 'ejs');
@@ -138,17 +146,56 @@ app.post('/auth/signup', async (req, res) => {
  
 // ── Simplify (core feature) ────────────────────────────────────────────────
 app.post('/simplify', requireAuth, async (req, res) => {
-  const { content, level, save_to_library } = req.body;
-  // TODO: call your LLM / simplification service here
-  // const simplified = await simplifyService.run(content, level);
-  // if (save_to_library) await Library.save(req.session.user.id, simplified);
+  const { content, level, language, save_to_library } = req.body; // ← add language
+
+  const isURL = content.startsWith('http://') || content.startsWith('https://');
+
+  try {
+  const prompt = `You are a language simplification and translation assistant for high school students.
+Your job is to rewrite and translate content at the requested CEFR level IN THE REQUESTED LANGUAGE.
+The vocab words and definitions in your response must also be written in the requested output language.
+Always respond with a JSON object in this exact format:
+{
+  "title": "A short title for the article in the output language",
+  "simplified": "The full rewritten and translated text as plain paragraphs",
+  "vocab": [
+    { "word": "difficultword", "definition": "simple definition in the output language" }
+  ]
+}
+Return ONLY the JSON. No markdown, no backticks, no extra text.
+
+${LEVEL_PROMPTS[level] || LEVEL_PROMPTS['B1']}
+OUTPUT LANGUAGE: ${language || 'English'}. Write the entire response in ${language || 'English'}.
+
+${isURL ? `The content is from this URL: ${content}` : `Here is the text to simplify:\n\n${content}`}`;
+
+  const result = await model.generateContent(prompt);
+  const raw = result.response.text().trim();
+
+  // Strip markdown code fences if Gemini adds them anyway
+  const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+  const parsed = JSON.parse(cleaned);
+
   res.render('result', {
-    title:   'Simplified Article',
-    content,
+    title:     parsed.title || 'Simplified Article',
+    simplified: parsed.simplified,
+    vocab:      parsed.vocab || [],
     level,
-    simplified: '<!-- TODO: insert LLM response here -->',
+    language:   language || 'English',
+    original:   content,
   });
-});
+
+} catch (err) {
+  console.error('Gemini error:', err.message);
+  res.render('result', {
+    title:      'Error',
+    simplified: 'Something went wrong. Please try again.',
+    vocab:      [],
+    level,
+    language:   language || 'English',
+    original:   content,
+  });
+}
 
 // ── Student Dashboard ──────────────────────────────────────────────────────
 app.get('/dashboard', requireAuth, async (req, res) => {
@@ -203,7 +250,11 @@ app.use((err, req, res, next) => {
 
 // ── Start ──────────────────────────────────────────────────────────────────
 async function startServer() {
+<<<<<<< HEAD
   await mongoose.connect();
+=======
+  await mongoose.connect();
+>>>>>>> 6696de4 (fixed simplify route debugged and changed the ai from using openai api to google gemini api)
   app.listen(3000, () => {
     console.log(`\n🐍  The Dial is running  →  http://localhost:3000\n`);
   });
