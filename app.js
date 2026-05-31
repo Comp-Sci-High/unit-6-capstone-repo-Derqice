@@ -1,14 +1,4 @@
 require('dotenv').config();
-<<<<<<< HEAD
-// ─────────────────────────────────────────────────────────────────────────────
-//  app.js  ·  The Dial · CompSciHigh Language Simplification Tool
-//  Stack:  Node.js · Express · EJS · Tailwind CSS (CDN)
-// ─────────────────────────────────────────────────────────────────────────────
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const genAI = new GoogleGenerativeAI();
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }); // free tier
-=======
->>>>>>> f95c96f ( added privacy help setting about pages as well as some teacher opporandi and set up a proper simplify api connectio)
 const express        = require('express');
 const path           = require('path');
 const expressLayouts = require('express-ejs-layouts');
@@ -41,16 +31,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-<<<<<<< HEAD
-  secret:             || 'dial-dev-secret-change-me',
-  resave:            false,
-  saveUninitialized: false,
-  cookie:            { secure:  === 'production' },
-=======
   secret:  || 'dial-dev-secret',
   resave: false, saveUninitialized: false,
   cookie: { secure:  === 'production' },
->>>>>>> f95c96f ( added privacy help setting about pages as well as some teacher opporandi and set up a proper simplify api connectio)
 }));
 
 
@@ -540,20 +523,9 @@ app.use((err, req, res, next) => {
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 async function startServer() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  await mongoose.connect();
-=======
-  await mongoose.connect();
->>>>>>> 6696de4 (fixed simplify route debugged and changed the ai from using openai api to google gemini api)
-  app.listen(3000, () => {
-    console.log(`\n🐍  The Dial is running  →  http://localhost:3000\n`);
-  });
-=======
   await mongoose.connect();
   console.log('🍃 MongoDB connected');
   app.listen(3001, () => console.log('\n🐍  The Dial is running  →  http://localhost:3001\n'));
->>>>>>> f95c96f ( added privacy help setting about pages as well as some teacher opporandi and set up a proper simplify api connectio)
 }
 startServer();
 module.exports = app;
