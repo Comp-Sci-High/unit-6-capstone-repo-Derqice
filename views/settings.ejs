@@ -1,0 +1,573 @@
+<%# ── settings.ejs ── User Settings Page ────────────────────────────────── %>
+<% if (flash) { %>
+<div class="mb-6 flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-medium
+            <%= flash.type === 'success' ? 'bg-[#3ecf8e]/15 text-[#002115] border border-[#3ecf8e]/30' : 'bg-red-50 text-red-700 border border-red-200' %>">
+  <i data-lucide="<%= flash.type === 'success' ? 'check-circle' : 'alert-circle' %>" class="w-4 h-4 flex-shrink-0"></i>
+  <%= flash.msg %>
+</div>
+<% } %>
+<%
+const u = typeof user !== 'undefined' && user ? user : { name: 'Alex Rivera', email: 'alex@compscihigh.org', role: 'student', level: 'B1' };
+const firstName = u.firstName || u.name?.split(' ')[0] || 'Alex';
+const lastName  = u.lastName  || u.name?.split(' ')[1] || 'Rivera';
+%>
+
+<div class="max-w-5xl mx-auto px-6 py-10">
+
+  <!-- ── Header ── -->
+  <div class="mb-10">
+    <p class="text-xs text-[#002115]/40 uppercase tracking-widest font-medium mb-1">Account</p>
+    <h1 class="font-display font-bold text-3xl text-[#002115]">Settings</h1>
+    <p class="text-sm text-[#002115]/50 mt-1">Manage your profile, appearance, and preferences.</p>
+  </div>
+<% if (typeof query !== 'undefined') { %>
+  <% const msgs = {
+    'profile':       ['Profile updated successfully.', 'green'],
+    'reading':       ['Reading preferences saved.', 'green'],
+    'password':      ['Password changed successfully.', 'green'],
+    'notifications': ['Notification settings saved.', 'green'],
+    'bad_email':     ['Must use a @compscihigh.org email.', 'red'],
+    'password_mismatch': ['Passwords do not match.', 'red'],
+    'wrong_password':    ['Current password is incorrect.', 'red'],
+    'short_password':    ['Password must be at least 8 characters.', 'red'],
+    'failed':            ['Something went wrong. Try again.', 'red'],
+  }; %>
+<% } %>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+    <!-- ── Sidebar nav ── -->
+    <div class="lg:col-span-1">
+      <nav class="space-y-1 sticky top-24">
+        <% const sections = [
+          { id: 'profile',       icon: 'user',           label: 'Profile'        },
+          { id: 'appearance',    icon: 'palette',         label: 'Appearance'     },
+          { id: 'reading',       icon: 'sliders-horizontal', label: 'Reading Prefs' },
+          { id: 'notifications', icon: 'bell',            label: 'Notifications'  },
+          { id: 'privacy',       icon: 'shield',          label: 'Privacy'        },
+          { id: 'danger',        icon: 'alert-triangle',  label: 'Danger Zone'    },
+        ]; %>
+        <% sections.forEach((s, i) => { %>
+        <button onclick="scrollTo('<%= s.id %>')"
+                id="nav-<%= s.id %>"
+                class="settings-nav w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-left <%= i === 0 ? 'bg-[#002115] text-white' : 'text-[#002115]/60 hover:bg-[#f8f6f0] hover:text-[#002115]' %>">
+          <i data-lucide="<%= s.icon %>" class="w-4 h-4 flex-shrink-0"></i>
+          <%= s.label %>
+        </button>
+        <% }) %>
+      </nav>
+    </div>
+
+    <!-- ── Settings panels ── -->
+    <div class="lg:col-span-3 space-y-8">
+
+      <!-- ════ PROFILE ════ -->
+      <div id="section-profile" class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden">
+        <div class="px-6 py-5 border-b border-[#e8e4dc]">
+          <h2 class="font-display font-semibold text-lg text-[#002115] flex items-center gap-2">
+            <i data-lucide="user" class="w-5 h-5 text-[#3ecf8e]"></i> Profile
+          </h2>
+          <p class="text-xs text-[#002115]/40 mt-0.5">Update your personal information.</p>
+        </div>
+        <form method="POST" action="/settings/profile" class="p-6 space-y-5">
+
+          <!-- Avatar -->
+          <div class="flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-[#002115] text-[#3ecf8e] flex items-center justify-center text-2xl font-display font-bold flex-shrink-0">
+              <%= firstName[0] %><%= lastName[0] %>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-[#002115]"><%= firstName %> <%= lastName %></p>
+              <p class="text-xs text-[#002115]/50"><%= u.email %></p>
+              <button type="button" class="mt-2 text-xs text-[#3ecf8e] hover:underline flex items-center gap-1">
+                <i data-lucide="upload" class="w-3 h-3"></i> Upload photo
+                <span class="text-[#002115]/30 ml-1">(coming soon)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Name row -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">First Name</label>
+              <input type="text" name="firstName" value="<%= firstName %>" required
+                     class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">Last Name</label>
+              <input type="text" name="lastName" value="<%= lastName %>" required
+                     class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">School Email</label>
+            <div class="relative">
+              <i data-lucide="mail" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#002115]/30"></i>
+              <input type="email" name="email" value="<%= u.email %>" required
+                     class="w-full pl-10 pr-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+            </div>
+            <p class="text-[11px] text-[#002115]/30 mt-1 ml-1">Must remain a @compscihigh.org address.</p>
+          </div>
+
+          <!-- Role (read-only) -->
+          <div>
+            <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">Role</label>
+            <div class="flex items-center gap-2 px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#f8f6f0]">
+              <i data-lucide="<%= u.role === 'teacher' ? 'book-open' : 'graduation-cap' %>" class="w-4 h-4 text-[#002115]/40"></i>
+              <span class="text-sm text-[#002115]/60 capitalize"><%= u.role %></span>
+              <span class="ml-auto text-[10px] text-[#002115]/30">Contact admin to change</span>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-1">
+            <button type="submit"
+                    class="flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-card transition-all active:scale-95">
+              <i data-lucide="save" class="w-4 h-4 text-[#3ecf8e]"></i> Save Profile
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ════ APPEARANCE ════ -->
+      <div id="section-appearance" class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden">
+        <div class="px-6 py-5 border-b border-[#e8e4dc]">
+          <h2 class="font-display font-semibold text-lg text-[#002115] flex items-center gap-2">
+            <i data-lucide="palette" class="w-5 h-5 text-[#3ecf8e]"></i> Appearance
+          </h2>
+          <p class="text-xs text-[#002115]/40 mt-0.5">Choose how The Dial looks for you.</p>
+        </div>
+        <div class="p-6 space-y-6">
+
+          <!-- Theme toggle -->
+          <div>
+            <p class="text-sm font-medium text-[#002115] mb-3">Theme</p>
+            <div class="grid grid-cols-3 gap-3">
+
+              <!-- Light -->
+              <button onclick="setTheme('light')" id="theme-light"
+                      class="theme-btn flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-[#3ecf8e] bg-[#3ecf8e]/5 transition-all">
+                <div class="w-full h-14 rounded-lg bg-[#f8f6f0] border border-[#e8e4dc] flex items-center justify-center overflow-hidden">
+                  <div class="w-8 h-2 bg-[#002115] rounded-full"></div>
+                </div>
+                <span class="text-xs font-semibold text-[#002115]">Light</span>
+                <span id="check-light" class="w-4 h-4 rounded-full bg-[#3ecf8e] flex items-center justify-center">
+                  <i data-lucide="check" class="w-2.5 h-2.5 text-white"></i>
+                </span>
+              </button>
+
+              <!-- Dark -->
+              <button onclick="setTheme('dark')" id="theme-dark"
+                      class="theme-btn flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-[#e8e4dc] hover:border-[#3ecf8e]/50 transition-all">
+                <div class="w-full h-14 rounded-lg bg-[#0d1f18] border border-[#2a4a38] flex items-center justify-center overflow-hidden">
+                  <div class="w-8 h-2 bg-[#3ecf8e] rounded-full"></div>
+                </div>
+                <span class="text-xs font-semibold text-[#002115]">Dark</span>
+                <span id="check-dark" class="hidden w-4 h-4 rounded-full bg-[#3ecf8e] items-center justify-center">
+                  <i data-lucide="check" class="w-2.5 h-2.5 text-white"></i>
+                </span>
+              </button>
+
+              <!-- System -->
+              <button onclick="setTheme('system')" id="theme-system"
+                      class="theme-btn flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-[#e8e4dc] hover:border-[#3ecf8e]/50 transition-all">
+                <div class="w-full h-14 rounded-lg border border-[#e8e4dc] flex overflow-hidden">
+                  <div class="flex-1 bg-[#f8f6f0]"></div>
+                  <div class="flex-1 bg-[#0d1f18]"></div>
+                </div>
+                <span class="text-xs font-semibold text-[#002115]">System</span>
+                <span id="check-system" class="hidden w-4 h-4 rounded-full bg-[#3ecf8e] items-center justify-center">
+                  <i data-lucide="check" class="w-2.5 h-2.5 text-white"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Font size -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <p class="text-sm font-medium text-[#002115]">Article Font Size</p>
+              <span id="font-size-label" class="text-xs font-mono text-[#3ecf8e] font-medium">16px</span>
+            </div>
+            <input type="range" id="font-size-slider" min="14" max="22" value="16" step="1"
+                   style="--pct: 33%" class="mb-2" />
+            <div class="flex justify-between text-[10px] text-[#002115]/30">
+              <span>Small</span><span>Default</span><span>Large</span>
+            </div>
+          </div>
+
+          <!-- Compact mode -->
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-[#002115]">Compact Mode</p>
+              <p class="text-xs text-[#002115]/50 mt-0.5">Reduce spacing and padding throughout the app.</p>
+            </div>
+            <label class="relative cursor-pointer">
+              <input type="checkbox" id="compact-toggle" class="sr-only peer" />
+              <div class="w-10 h-5 bg-[#e8e4dc] rounded-full peer-checked:bg-[#3ecf8e] transition-colors duration-200"></div>
+              <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 peer-checked:translate-x-5"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ READING PREFERENCES ════ -->
+      <div id="section-reading" class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden">
+        <div class="px-6 py-5 border-b border-[#e8e4dc]">
+          <h2 class="font-display font-semibold text-lg text-[#002115] flex items-center gap-2">
+            <i data-lucide="sliders-horizontal" class="w-5 h-5 text-[#3ecf8e]"></i> Reading Preferences
+          </h2>
+          <p class="text-xs text-[#002115]/40 mt-0.5">Set your default reading level and language.</p>
+        </div>
+        <form method="POST" action="/settings/reading" class="p-6 space-y-5">
+
+          <!-- Default level -->
+          <div>
+            <label class="block text-sm font-medium text-[#002115] mb-3">Default Reading Level</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <% ['A1','A2','B1','B2'].forEach(l => {
+                const labels = { A1: 'Novice', A2: 'Elementary', B1: 'Intermediate', B2: 'Advanced' };
+                const colors = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-intermediate', B2: 'badge-advanced' };
+                const active = (u.level || 'B1') === l;
+              %>
+              <label class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all
+                             <%= active ? 'border-[#3ecf8e] bg-[#3ecf8e]/5' : 'border-[#e8e4dc] hover:border-[#3ecf8e]/40' %>">
+                <input type="radio" name="level" value="<%= l %>" class="sr-only" <%= active ? 'checked' : '' %> />
+                <span class="<%= colors[l] %> text-xs font-bold px-2.5 py-1 rounded-full"><%= l %></span>
+                <span class="text-xs font-medium text-[#002115]"><%= labels[l] %></span>
+              </label>
+              <% }) %>
+            </div>
+          </div>
+
+          <!-- Default language -->
+          <div>
+            <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">Default Output Language</label>
+            <select name="language"
+                    class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all">
+              <option value="English"  selected>English</option>
+              <option value="Spanish">Spanish</option>
+              <option value="French">French</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Mandarin Chinese">Mandarin Chinese</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Swahili">Swahili</option>
+              <option value="Haitian Creole">Haitian Creole</option>
+              <option value="Urdu">Urdu</option>
+            </select>
+          </div>
+
+          <!-- Auto-save toggle -->
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-[#002115]">Auto-save to Library</p>
+              <p class="text-xs text-[#002115]/50 mt-0.5">Automatically save every simplified article.</p>
+            </div>
+            <label class="relative cursor-pointer">
+             <input type="checkbox" name="autoSave" value="1" class="sr-only peer"
+       <%= dbUser?.autoSave ? 'checked' : '' %> />
+              <div class="w-10 h-5 bg-[#e8e4dc] rounded-full peer-checked:bg-[#3ecf8e] transition-colors duration-200"></div>
+              <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 peer-checked:translate-x-5"></div>
+            </label>
+          </div>
+
+          <!-- Vocab auto-add -->
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-[#002115]">Auto-add Vocab Words</p>
+              <p class="text-xs text-[#002115]/50 mt-0.5">Add key words to your Vocab Bank after each simplification.</p>
+            </div>
+            <label class="relative cursor-pointer">
+             <input type="checkbox" name="autoVocab" value="1" class="sr-only peer"
+       <%= dbUser?.autoVocab !== false ? 'checked' : '' %> />
+              <div class="w-10 h-5 bg-[#e8e4dc] rounded-full peer-checked:bg-[#3ecf8e] transition-colors duration-200"></div>
+              <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 peer-checked:translate-x-5"></div>
+            </label>
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit"
+                    class="flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-card transition-all active:scale-95">
+              <i data-lucide="save" class="w-4 h-4 text-[#3ecf8e]"></i> Save Preferences
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ════ NOTIFICATIONS ════ -->
+      <div id="section-notifications" class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden">
+        <div class="px-6 py-5 border-b border-[#e8e4dc]">
+          <h2 class="font-display font-semibold text-lg text-[#002115] flex items-center gap-2">
+            <i data-lucide="bell" class="w-5 h-5 text-[#3ecf8e]"></i> Notifications
+          </h2>
+          <p class="text-xs text-[#002115]/40 mt-0.5">Choose what you want to be notified about.</p>
+        </div>
+        <form method="POST" action="/settings/notifications" class="p-6 space-y-4">
+          <%
+          const notifs = [
+            { name: 'notifAssignment', label: 'New Assignments',    desc: 'When a teacher assigns you a new article.',    checked: true  },
+            { name: 'notifStreak',     label: 'Streak Reminders',   desc: 'Daily reminder to keep your reading streak.',  checked: true  },
+            { name: 'notifVocab',      label: 'Vocab Milestones',   desc: 'When you hit 10, 25, 50 vocab words.',         checked: false },
+            { name: 'notifLevel',      label: 'Level-Up Suggestion',desc: 'When you might be ready to move up a level.',  checked: true  },
+            { name: 'notifEmail',      label: 'Email Notifications',desc: 'Get email summaries of your weekly activity.', checked: false },
+          ];
+          %>
+          <% notifs.forEach(n => { %>
+          <div class="flex items-start justify-between gap-4 py-1">
+            <div>
+              <p class="text-sm font-medium text-[#002115]"><%= n.label %></p>
+              <p class="text-xs text-[#002115]/50 mt-0.5"><%= n.desc %></p>
+            </div>
+            <label class="relative cursor-pointer flex-shrink-0 mt-0.5">
+              <input type="checkbox" name="<%= n.name %>" value="1" class="sr-only peer" <%= n.checked ? 'checked' : '' %> />
+              <div class="w-10 h-5 bg-[#e8e4dc] rounded-full peer-checked:bg-[#3ecf8e] transition-colors duration-200"></div>
+              <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 peer-checked:translate-x-5"></div>
+            </label>
+          </div>
+          <% }) %>
+          <div class="flex justify-end pt-2">
+            <button type="submit"
+                    class="flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-card transition-all active:scale-95">
+              <i data-lucide="save" class="w-4 h-4 text-[#3ecf8e]"></i> Save Notifications
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ════ PRIVACY & SECURITY ════ -->
+      <div id="section-privacy" class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden">
+        <div class="px-6 py-5 border-b border-[#e8e4dc]">
+          <h2 class="font-display font-semibold text-lg text-[#002115] flex items-center gap-2">
+            <i data-lucide="shield" class="w-5 h-5 text-[#3ecf8e]"></i> Privacy & Security
+          </h2>
+          <p class="text-xs text-[#002115]/40 mt-0.5">Manage your password and data sharing.</p>
+        </div>
+        <div class="p-6 space-y-6">
+
+          <!-- Change password -->
+          <form method="POST" action="/settings/password" class="space-y-4">
+            <p class="text-sm font-semibold text-[#002115]">Change Password</p>
+            <div>
+              <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">Current Password</label>
+              <input type="password" name="currentPassword" placeholder="••••••••"
+                     class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">New Password</label>
+                <input type="password" name="newPassword" placeholder="Min. 8 chars" minlength="8"
+                       class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">Confirm New</label>
+                <input type="password" name="confirmPassword" placeholder="Repeat password"
+                       class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+              </div>
+            </div>
+            <button type="submit"
+                    class="flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-6 py-3 rounded-xl transition-all active:scale-95">
+              <i data-lucide="lock" class="w-4 h-4 text-[#3ecf8e]"></i> Update Password
+            </button>
+          </form>
+
+          <div class="border-t border-[#e8e4dc] pt-5 space-y-4">
+            <p class="text-sm font-semibold text-[#002115]">Data & Privacy</p>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-[#002115]">Share activity with teachers</p>
+                <p class="text-xs text-[#002115]/50 mt-0.5">Allow your teacher to see your reading progress and vocab.</p>
+              </div>
+              <label class="relative cursor-pointer">
+                <input type="checkbox" class="sr-only peer" checked />
+                <div class="w-10 h-5 bg-[#e8e4dc] rounded-full peer-checked:bg-[#3ecf8e] transition-colors"></div>
+                <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+              </label>
+            </div>
+            <a href="/privacy" class="inline-flex items-center gap-1.5 text-xs text-[#3ecf8e] hover:underline">
+              <i data-lucide="external-link" class="w-3 h-3"></i> Read our full Privacy Policy
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ DANGER ZONE ════ -->
+      <div id="section-danger" class="bg-white rounded-2xl border border-red-200 shadow-card overflow-hidden">
+        <div class="px-6 py-5 border-b border-red-100 bg-red-50/50">
+          <h2 class="font-display font-semibold text-lg text-red-700 flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500"></i> Danger Zone
+          </h2>
+          <p class="text-xs text-red-500/70 mt-0.5">These actions are permanent and cannot be undone.</p>
+        </div>
+        <div class="p-6 space-y-4">
+
+          <!-- Clear vocab -->
+          <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-[#e8e4dc] bg-[#f8f6f0]">
+            <div>
+              <p class="text-sm font-semibold text-[#002115]">Clear Vocab Bank</p>
+              <p class="text-xs text-[#002115]/50 mt-0.5">Permanently delete all words from your Vocab Bank.</p>
+            </div>
+            <button onclick="confirmDanger('clear-vocab')"
+                    class="flex-shrink-0 flex items-center gap-1.5 border border-red-200 hover:bg-red-50 text-red-500 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
+            </button>
+          </div>
+
+          <!-- Clear library -->
+          <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-[#e8e4dc] bg-[#f8f6f0]">
+            <div>
+              <p class="text-sm font-semibold text-[#002115]">Clear Reading Library</p>
+              <p class="text-xs text-[#002115]/50 mt-0.5">Delete all saved articles from your library.</p>
+            </div>
+            <button onclick="confirmDanger('clear-library')"
+                    class="flex-shrink-0 flex items-center gap-1.5 border border-red-200 hover:bg-red-50 text-red-500 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
+            </button>
+          </div>
+
+          <!-- Delete account -->
+          <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-red-200 bg-red-50/50">
+            <div>
+              <p class="text-sm font-semibold text-red-700">Delete Account</p>
+              <p class="text-xs text-red-500/70 mt-0.5">Permanently delete your account and all associated data.</p>
+            </div>
+            <button onclick="confirmDanger('delete-account')"
+                    class="flex-shrink-0 flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all active:scale-95">
+              <i data-lucide="user-x" class="w-3.5 h-3.5"></i> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" class="hidden fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#002115] text-white text-sm font-medium px-5 py-3.5 rounded-xl shadow-lift">
+  <i data-lucide="check-circle" class="w-4 h-4 text-[#3ecf8e]"></i>
+  <span id="toast-msg">Settings saved</span>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // ── Sidebar active state on scroll ────────────────────────────────────────
+  const sectionIds = ['profile','appearance','reading','notifications','privacy','danger'];
+  function scrollTo(id) {
+    document.getElementById('section-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    sectionIds.forEach(s => {
+      const btn = document.getElementById('nav-' + s);
+      if (s === id) {
+        btn.className = 'settings-nav w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-left bg-[#002115] text-white';
+      } else {
+        btn.className = 'settings-nav w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-left text-[#002115]/60 hover:bg-[#f8f6f0] hover:text-[#002115]';
+      }
+    });
+  }
+
+  // ── Theme switcher ────────────────────────────────────────────────────────
+  const themes = ['light','dark','system'];
+  function setTheme(t) {
+    localStorage.setItem('dial-theme', t);
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const applyDark = t === 'dark' || (t === 'system' && prefersDark);
+    document.documentElement.classList.toggle('dark', applyDark);
+
+    themes.forEach(th => {
+      const btn   = document.getElementById('theme-' + th);
+      const check = document.getElementById('check-' + th);
+      if (th === t) {
+        btn.classList.add('border-[#3ecf8e]', 'bg-[#3ecf8e]/5');
+        btn.classList.remove('border-[#e8e4dc]');
+        check.classList.remove('hidden');
+        check.classList.add('flex');
+      } else {
+        btn.classList.remove('border-[#3ecf8e]', 'bg-[#3ecf8e]/5');
+        btn.classList.add('border-[#e8e4dc]');
+        check.classList.add('hidden');
+        check.classList.remove('flex');
+      }
+    });
+    showToast('Theme updated to ' + t);
+  }
+
+  // Set initial theme state from localStorage
+  (function() {
+    const saved = localStorage.getItem('dial-theme') || 'light';
+    themes.forEach(th => {
+      const btn   = document.getElementById('theme-' + th);
+      const check = document.getElementById('check-' + th);
+      if (th === saved) {
+        btn.classList.add('border-[#3ecf8e]', 'bg-[#3ecf8e]/5');
+        btn.classList.remove('border-[#e8e4dc]');
+        check.classList.remove('hidden'); check.classList.add('flex');
+      } else {
+        btn.classList.remove('border-[#3ecf8e]','bg-[#3ecf8e]/5');
+        btn.classList.add('border-[#e8e4dc]');
+        check.classList.add('hidden'); check.classList.remove('flex');
+      }
+    });
+  })();
+
+  // ── Font size slider ──────────────────────────────────────────────────────
+  const fontSlider = document.getElementById('font-size-slider');
+  const fontLabel  = document.getElementById('font-size-label');
+  const saved = parseInt(localStorage.getItem('dial-font-size') || '16');
+  fontSlider.value = saved;
+  fontLabel.textContent = saved + 'px';
+  document.documentElement.style.setProperty('--article-font-size', saved + 'px');
+  const pct = ((saved - 14) / (22 - 14)) * 100;
+  fontSlider.style.setProperty('--pct', pct + '%');
+
+  fontSlider.addEventListener('input', function() {
+    fontLabel.textContent = this.value + 'px';
+    localStorage.setItem('dial-font-size', this.value);
+    document.documentElement.style.setProperty('--article-font-size', this.value + 'px');
+    const p = ((this.value - 14) / (22 - 14)) * 100;
+    this.style.setProperty('--pct', p + '%');
+  });
+
+  // ── Toast ────────────────────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.remove('hidden');
+    t.classList.add('flex');
+    setTimeout(() => { t.classList.add('hidden'); t.classList.remove('flex'); }, 3000);
+  }
+
+  // Show toast on form submit
+  document.querySelectorAll('form[action^="/settings"]').forEach(f => {
+    f.addEventListener('submit', () => showToast('Settings saved ✓'));
+  });
+
+  // ── Danger zone ───────────────────────────────────────────────────────────
+  const dangerMessages = {
+    'clear-vocab':    'This will permanently delete ALL words from your Vocab Bank. Are you sure?',
+    'clear-library':  'This will permanently delete ALL articles from your library. Are you sure?',
+    'delete-account': 'This will PERMANENTLY DELETE your account and all data. This cannot be undone. Type DELETE to confirm.',
+  };
+  const dangerActions = {
+    'clear-vocab':    '/settings/clear-vocab',
+    'clear-library':  '/settings/clear-library',
+    'delete-account': '/settings/delete-account',
+  };
+
+  function confirmDanger(action) {
+    if (action === 'delete-account') {
+      const input = prompt(dangerMessages[action]);
+      if (input !== 'DELETE') return;
+    } else {
+      if (!confirm(dangerMessages[action])) return;
+    }
+    fetch(dangerActions[action], { method: 'POST', headers: {'Content-Type':'application/json'} })
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          if (action === 'delete-account') window.location.href = '/';
+          else showToast('Done — data cleared.');
+        }
+      });
+  }
+</script>

@@ -1,0 +1,122 @@
+<%# ── privacy.ejs ── Privacy Policy Page ────────────────────────────────── %>
+
+<!-- Hero -->
+<section class="bg-[#002115] relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.06]"
+       style="background-image: linear-gradient(#3ecf8e 1px, transparent 1px), linear-gradient(90deg, #3ecf8e 1px, transparent 1px); background-size: 48px 48px;"></div>
+  <div class="relative max-w-4xl mx-auto px-6 py-20 text-center">
+    <div class="inline-flex items-center gap-2 bg-[#3ecf8e]/15 border border-[#3ecf8e]/25 rounded-full px-4 py-1.5 mb-6">
+      <i data-lucide="shield" class="w-3.5 h-3.5 text-[#3ecf8e]"></i>
+      <span class="text-[#3ecf8e] text-xs font-medium tracking-widest uppercase">Privacy Policy</span>
+    </div>
+    <h1 class="font-display font-bold text-5xl text-white mb-4">Your Privacy <span class="text-[#3ecf8e]">Matters.</span></h1>
+    <p class="text-white/50 text-lg max-w-xl mx-auto">Last updated: <%= new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+  </div>
+  <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-[#f8f6f0]"></div>
+</section>
+
+<div class="max-w-3xl mx-auto px-6 py-16">
+
+  <!-- Quick summary cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-14">
+    <% const highlights = [
+      { icon: 'shield-check', title: 'No Ads. Ever.',        desc: 'We never serve ads or sell your data to third parties.' },
+      { icon: 'school',       title: 'School-Only',          desc: 'Access is restricted to verified @compscihigh.org accounts.' },
+      { icon: 'lock',         title: 'Data Stays Safe',      desc: 'Your reading history and vocab bank are private to you.' },
+    ]; %>
+    <% highlights.forEach(h => { %>
+    <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card p-5 text-center">
+      <div class="w-9 h-9 rounded-xl bg-[#002115] flex items-center justify-center mx-auto mb-3">
+        <i data-lucide="<%= h.icon %>" class="w-4 h-4 text-[#3ecf8e]"></i>
+      </div>
+      <p class="font-semibold text-sm text-[#002115] mb-1"><%= h.title %></p>
+      <p class="text-xs text-[#002115]/50 leading-relaxed"><%= h.desc %></p>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- Policy sections -->
+  <%
+  const sections = [
+    {
+      icon: 'database',
+      title: 'What We Collect',
+      content: `When you create an account, we collect your name, school email address, and chosen reading level. When you use The Dial, we store the articles you save to your library and the vocabulary words added to your Vocab Bank. We do not collect any payment information, phone numbers, or personal information beyond what is necessary to run the platform.`
+    },
+    {
+      icon: 'cpu',
+      title: 'How We Use Your Data',
+      content: `Your data is used solely to provide The Dial's features — showing your reading list, building your personal Vocab Bank, and allowing teachers to assign readings to their class. We use Google Gemini to process and simplify content. Text you submit for simplification is sent to Google's API to generate a response. We do not store the raw content you paste beyond your current session unless you explicitly save an article to your library.`
+    },
+    {
+      icon: 'share-2',
+      title: 'Who We Share Data With',
+      content: `We do not sell, rent, or trade your personal data to anyone. The only third-party service your content touches is Google Gemini (for AI simplification) and MongoDB Atlas (for secure data storage). Both services are bound by their own privacy policies and data processing agreements. Your teachers can see class-level activity data (e.g. which words students look up most) but cannot see your individual reading history.`
+    },
+    {
+      icon: 'users',
+      title: 'Student Data & FERPA',
+      content: `The Dial is designed for use in a school environment and takes student data protection seriously. We comply with FERPA guidelines. Student data is never used for advertising, never shared with third-party marketers, and is only accessible to the student themselves and authorized school staff. Parents or guardians of students under 18 may request to review or delete their child's data by contacting a school administrator.`
+    },
+    {
+      icon: 'cookie',
+      title: 'Cookies & Sessions',
+      content: `We use a single session cookie to keep you logged in while you use The Dial. This cookie expires when you log out or close your browser. We do not use tracking cookies, advertising cookies, or any third-party analytics cookies.`
+    },
+    {
+      icon: 'trash-2',
+      title: 'Deleting Your Data',
+      content: `You can remove individual articles from your library and words from your Vocab Bank at any time from your dashboard. To fully delete your account and all associated data, contact your CompSciHigh administrator. Upon deletion, all your personal data will be permanently removed from our systems within 30 days.`
+    },
+    {
+      icon: 'refresh-cw',
+      title: 'Changes to This Policy',
+      content: `We may update this privacy policy as The Dial grows. If we make significant changes, we will notify users via the platform. Continued use of The Dial after changes are posted constitutes acceptance of the new policy.`
+    },
+  ];
+  %>
+
+  <div class="space-y-6">
+    <% sections.forEach((s, i) => { %>
+    <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden">
+      <button class="w-full flex items-center justify-between px-6 py-5 text-left group"
+              onclick="toggleSection(<%= i %>)">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-[#002115] flex items-center justify-center flex-shrink-0">
+            <i data-lucide="<%= s.icon %>" class="w-4 h-4 text-[#3ecf8e]"></i>
+          </div>
+          <h3 class="font-display font-semibold text-[#002115] text-lg"><%= s.title %></h3>
+        </div>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-[#002115]/40 transition-transform duration-200" id="chevron-<%= i %>"></i>
+      </button>
+      <div id="section-<%= i %>" class="hidden px-6 pb-6">
+        <p class="text-sm text-[#002115]/60 leading-relaxed border-t border-[#e8e4dc] pt-4"><%= s.content %></p>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- Contact -->
+  <div class="mt-12 bg-[#002115] rounded-2xl p-8 text-center">
+    <i data-lucide="mail" class="w-8 h-8 text-[#3ecf8e] mx-auto mb-3"></i>
+    <h3 class="font-display font-semibold text-white text-xl mb-2">Questions About Privacy?</h3>
+    <p class="text-white/50 text-sm mb-5">Reach out to your CompSciHigh administrator or the platform team.</p>
+    <a href="mailto:admin@compscihigh.org"
+       class="inline-flex items-center gap-2 bg-[#3ecf8e]/20 hover:bg-[#3ecf8e]/30 border border-[#3ecf8e]/30 text-[#3ecf8e] text-sm font-semibold px-6 py-3 rounded-xl transition-all">
+      <i data-lucide="mail" class="w-4 h-4"></i>
+      admin@compscihigh.org
+    </a>
+  </div>
+
+</div>
+
+<script>
+  lucide.createIcons();
+  function toggleSection(i) {
+    const el  = document.getElementById('section-' + i);
+    const chv = document.getElementById('chevron-' + i);
+    const open = !el.classList.contains('hidden');
+    el.classList.toggle('hidden', open);
+    chv.style.transform = open ? '' : 'rotate(180deg)';
+  }
+</script>

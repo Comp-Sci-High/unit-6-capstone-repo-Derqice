@@ -1,0 +1,163 @@
+<%# ── enroll.ejs ── Student Class Enrollment Page ───────────────────────── %>
+
+<%
+const enrolled   = typeof enrolledClasses !== 'undefined' ? enrolledClasses : [];
+const available  = typeof availableClasses !== 'undefined' ? availableClasses : [
+  { id: 'cs101', code: 'CS-4829', name: 'Intro to Computer Science', teacher: 'Dr. Okafor',    period: '1st Period', students: 24, level: 'B1' },
+  { id: 'cs201', code: 'CS-7731', name: 'Data Structures',           teacher: 'Ms. Patel',     period: '3rd Period', students: 18, level: 'B2' },
+  { id: 'cs102', code: 'CS-5512', name: 'Web Development',           teacher: 'Mr. Mensah',    period: '5th Period', students: 21, level: 'A2' },
+  { id: 'cs301', code: 'CS-9943', name: 'AP Computer Science',       teacher: 'Dr. Okafor',    period: '6th Period', students: 15, level: 'B2' },
+];
+const levelBadge = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-intermediate', B2: 'badge-advanced' };
+const levelLabel = { A1: 'Novice', A2: 'Elementary', B1: 'Intermediate', B2: 'Advanced' };
+%>
+
+<div class="max-w-4xl mx-auto px-6 py-12">
+
+  <!-- Header -->
+  <div class="mb-10">
+    <a href="/dashboard" class="inline-flex items-center gap-1.5 text-sm text-[#002115]/40 hover:text-[#002115] transition-colors mb-4">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
+    </a>
+    <h1 class="font-display font-bold text-3xl text-[#002115]">Enroll in a Class</h1>
+    <p class="text-[#002115]/50 text-sm mt-1">Enter a class code from your teacher or browse available classes below.</p>
+  </div>
+
+  <!-- ── Join by Code ── -->
+  <div class="bg-[#002115] rounded-2xl p-8 mb-10 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.06]"
+         style="background-image: linear-gradient(#3ecf8e 1px, transparent 1px), linear-gradient(90deg, #3ecf8e 1px, transparent 1px); background-size: 32px 32px;"></div>
+    <div class="relative">
+      <div class="flex items-center gap-2 mb-2">
+        <i data-lucide="key-round" class="w-5 h-5 text-[#3ecf8e]"></i>
+        <h2 class="font-display font-semibold text-xl text-white">Have a Class Code?</h2>
+      </div>
+      <p class="text-white/50 text-sm mb-6">Your teacher will give you a class code that looks like <code class="font-mono bg-white/10 px-1.5 py-0.5 rounded text-[#3ecf8e]">CS-XXXX</code></p>
+      <form method="POST" action="/enroll/code" class="flex flex-col sm:flex-row gap-3">
+        <input type="text" name="code" placeholder="Enter class code e.g. CS-4829"
+               maxlength="8" required
+               class="flex-1 px-5 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/30 text-sm font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/50 focus:border-[#3ecf8e] uppercase transition-all"
+               oninput="this.value = this.value.toUpperCase()" />
+        <button type="submit"
+                class="flex items-center justify-center gap-2 bg-[#3ecf8e] hover:bg-[#22a06b] text-[#002115] font-bold text-sm px-8 py-3.5 rounded-xl transition-all active:scale-95 whitespace-nowrap">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          Join Class
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Currently Enrolled ── -->
+  <% if (enrolled.length) { %>
+  <div class="mb-10">
+    <h2 class="font-display font-semibold text-xl text-[#002115] flex items-center gap-2 mb-5">
+      <i data-lucide="check-circle" class="w-5 h-5 text-[#3ecf8e]"></i>
+      My Classes
+    </h2>
+    <div class="space-y-3">
+      <% enrolled.forEach(c => { %>
+      <div class="bg-white rounded-2xl border border-[#3ecf8e]/30 shadow-card p-5 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-xl bg-[#3ecf8e]/15 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="graduation-cap" class="w-5 h-5 text-[#3ecf8e]"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-0.5 flex-wrap">
+              <h3 class="font-semibold text-sm text-[#002115]"><%= c.name %></h3>
+              <span class="<%= levelBadge[c.level] %> text-[10px] font-semibold px-2 py-0.5 rounded-full"><%= c.level %></span>
+            </div>
+            <p class="text-xs text-[#002115]/50"><%= c.teacher %> · <%= c.period %></p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs text-[#002115]/30 bg-[#f8f6f0] px-2.5 py-1 rounded-lg"><%= c.code %></span>
+          <form method="POST" action="/enroll/leave">
+            <input type="hidden" name="classId" value="<%= c.id %>" />
+            <button type="submit"
+                    class="w-8 h-8 rounded-lg hover:bg-red-50 hover:text-red-500 text-[#002115]/20 flex items-center justify-center transition-all"
+                    onclick="return confirm('Leave <%= c.name %>?')" title="Leave class">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+  <!-- ── Browse Available Classes ── -->
+  <div>
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="font-display font-semibold text-xl text-[#002115] flex items-center gap-2">
+        <i data-lucide="layout-grid" class="w-5 h-5 text-[#3ecf8e]"></i>
+        Available Classes
+      </h2>
+      <!-- Filter -->
+      <select id="level-filter" class="text-xs border border-[#e8e4dc] bg-white text-[#002115]/60 px-3 py-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40">
+        <option value="">All Levels</option>
+        <option value="A1">Novice (A1)</option>
+        <option value="A2">Elementary (A2)</option>
+        <option value="B1">Intermediate (B1)</option>
+        <option value="B2">Advanced (B2)</option>
+      </select>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="class-grid">
+      <% available.forEach(c => { %>
+      <div class="class-card bg-white rounded-2xl border border-[#e8e4dc] shadow-card hover:shadow-lift transition-all duration-200 overflow-hidden"
+           data-level="<%= c.level %>">
+        <!-- Top accent -->
+        <div class="h-1 bg-gradient-to-r from-[#002115] to-[#3ecf8e]"></div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
+                <span class="<%= levelBadge[c.level] %> text-[10px] font-semibold px-2 py-0.5 rounded-full"><%= levelLabel[c.level] %> · <%= c.level %></span>
+                <span class="font-mono text-[10px] text-[#002115]/30 bg-[#f8f6f0] px-2 py-0.5 rounded"><%= c.code %></span>
+              </div>
+              <h3 class="font-display font-semibold text-[#002115] text-base"><%= c.name %></h3>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-[#002115]/40 mb-4">
+            <span class="flex items-center gap-1"><i data-lucide="user" class="w-3 h-3"></i> <%= c.teacher %></span>
+            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> <%= c.period %></span>
+            <span class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> <%= c.students %> students</span>
+          </div>
+          <form method="POST" action="/enroll/join">
+            <input type="hidden" name="classId" value="<%= c.id %>" />
+            <button type="submit"
+                    class="w-full flex items-center justify-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-xs font-semibold py-2.5 rounded-xl transition-all active:scale-95">
+              <i data-lucide="plus" class="w-3.5 h-3.5 text-[#3ecf8e]"></i>
+              Enroll in Class
+            </button>
+          </form>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+
+    <div id="no-results" class="hidden text-center py-12 text-[#002115]/30">
+      <i data-lucide="search-x" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
+      <p class="text-sm">No classes match that filter.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // Level filter
+  document.getElementById('level-filter').addEventListener('change', function() {
+    const val   = this.value;
+    const cards = document.querySelectorAll('.class-card');
+    let visible = 0;
+    cards.forEach(c => {
+      const show = !val || c.dataset.level === val;
+      c.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('no-results').classList.toggle('hidden', visible > 0);
+  });
+</script>

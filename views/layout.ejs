@@ -62,7 +62,7 @@
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
 
       <!-- Brand -->
-      <a href="/" class="flex items-center gap-3 group">
+      <a href="<%= user ? '/dashboard' : '/' %>" class="flex items-center gap-3 group">
         <!-- Scholar Snake placeholder logo -->
         <div class="w-10 h-10 rounded-xl bg-[#3ecf8e]/20 border border-[#3ecf8e]/40 flex items-center justify-center overflow-hidden">
           <img src="/images/scholar-snake.svg" alt="Scholar Snake mascot"
@@ -80,7 +80,7 @@
       <!-- Desktop Nav Links -->
       <div class="hidden md:flex items-center gap-8">
         <% if (user) { %>
-          <a href="/dashboard" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
+          <a href="/library" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
             <i data-lucide="library" class="w-4 h-4"></i> My Library
           </a>
           <a href="/settings" class="nav-link text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 flex items-center gap-1.5">
@@ -110,7 +110,7 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-6 py-4 space-y-3">
       <% if (user) { %>
-        <a href="/dashboard" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
+        <a href="/library" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">
           <i data-lucide="library" class="w-4 h-4"></i> My Library
         </a>
         <a href="/settings" class="flex items-center gap-2 text-sm text-white/80 hover:text-white py-1">

@@ -1,0 +1,365 @@
+<%# ── all-students.ejs ── Teacher: All Students View ────────────────────── %>
+
+<%
+const students = typeof studentList !== 'undefined' ? studentList : [
+  { _id: '1', firstName: 'Maya',   lastName: 'Patel',   email: 'maya@compscihigh.org',   level: 'B1', role: 'student', streak: 7,  articleCount: 6,  vocabCount: 22, lastActive: new Date(Date.now() - 3600000),      enrolledClass: 'Intro to CS'    },
+  { _id: '2', firstName: 'Jordan', lastName: 'Lee',     email: 'jordan@compscihigh.org', level: 'A2', role: 'student', streak: 3,  articleCount: 3,  vocabCount: 9,  lastActive: new Date(Date.now() - 86400000),     enrolledClass: 'Intro to CS'    },
+  { _id: '3', firstName: 'Sam',    lastName: 'Okafor',  email: 'sam@compscihigh.org',    level: 'B2', role: 'student', streak: 14, articleCount: 9,  vocabCount: 41, lastActive: new Date(Date.now() - 7200000),      enrolledClass: 'Data Structures' },
+  { _id: '4', firstName: 'Priya',  lastName: 'Sharma',  email: 'priya@compscihigh.org',  level: 'A1', role: 'student', streak: 1,  articleCount: 1,  vocabCount: 4,  lastActive: new Date(Date.now() - 5*86400000),   enrolledClass: 'Intro to CS'    },
+  { _id: '5', firstName: 'Chris',  lastName: 'Mensah',  email: 'chris@compscihigh.org',  level: 'B1', role: 'student', streak: 5,  articleCount: 4,  vocabCount: 17, lastActive: new Date(Date.now() - 2*86400000),   enrolledClass: 'Web Development' },
+  { _id: '6', firstName: 'Aisha',  lastName: 'Diallo',  email: 'aisha@compscihigh.org',  level: 'B2', role: 'student', streak: 0,  articleCount: 2,  vocabCount: 8,  lastActive: new Date(Date.now() - 10*86400000),  enrolledClass: 'AP CS'          },
+];
+
+const classes   = typeof classList !== 'undefined' ? classList : ['All Classes', 'Intro to CS', 'Data Structures', 'Web Development', 'AP CS'];
+const levelBadge = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-intermediate', B2: 'badge-advanced' };
+
+function timeAgo(date) {
+  const diff = Math.floor((Date.now() - new Date(date)) / 1000);
+  if (diff < 60)     return 'Just now';
+  if (diff < 3600)   return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400)  return Math.floor(diff/3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+  return Math.floor(diff/604800) + 'w ago';
+}
+%>
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+  <!-- ── Header ── -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div>
+      <a href="/teacher/dashboard"
+         class="inline-flex items-center gap-1.5 text-sm text-[#002115]/40 hover:text-[#002115] transition-colors mb-3">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Teacher Dashboard
+      </a>
+      <h1 class="font-display font-bold text-3xl text-[#002115]">All Students</h1>
+      <p class="text-sm text-[#002115]/50 mt-1"><%= students.length %> students enrolled across your classes</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="/teacher/export"
+         class="inline-flex items-center gap-2 border border-[#002115]/15 hover:border-[#3ecf8e] text-[#002115]/70 text-sm font-medium px-4 py-2.5 rounded-xl transition-all">
+        <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+      </a>
+      <a href="/teacher/dashboard"
+         class="inline-flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-card transition-all">
+        <i data-lucide="bar-chart-2" class="w-4 h-4 text-[#3ecf8e]"></i> Analytics
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Stats strip ── -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <%
+    const avgStreak    = students.length ? Math.round(students.reduce((s,u) => s + u.streak, 0) / students.length) : 0;
+    const avgArticles  = students.length ? Math.round(students.reduce((s,u) => s + u.articleCount, 0) / students.length) : 0;
+    const activeToday  = students.filter(u => (Date.now() - new Date(u.lastActive)) < 86400000).length;
+    const kpis = [
+      { icon: 'users',       label: 'Total Students',   value: students.length },
+      { icon: 'activity',    label: 'Active Today',      value: activeToday     },
+      { icon: 'flame',       label: 'Avg. Streak',       value: avgStreak + 'd' },
+      { icon: 'book-open',   label: 'Avg. Articles',     value: avgArticles     },
+    ];
+    %>
+    <% kpis.forEach(k => { %>
+    <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card p-5 flex items-center gap-4">
+      <div class="w-10 h-10 rounded-xl bg-[#002115] flex items-center justify-center flex-shrink-0">
+        <i data-lucide="<%= k.icon %>" class="w-5 h-5 text-[#3ecf8e]"></i>
+      </div>
+      <div>
+        <p class="text-2xl font-display font-bold text-[#002115] leading-tight"><%= k.value %></p>
+        <p class="text-xs text-[#002115]/50"><%= k.label %></p>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- ── Search & Filter ── -->
+  <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card p-4 mb-6">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <!-- Search -->
+      <div class="relative flex-1">
+        <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#002115]/30"></i>
+        <input type="text" id="student-search" placeholder="Search by name or email…"
+               class="w-full pl-11 pr-10 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] placeholder-[#002115]/30 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+        <button id="search-clear" onclick="clearSearch()"
+                class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#002115]/10 hover:bg-[#002115]/20 items-center justify-center">
+          <i data-lucide="x" class="w-3 h-3 text-[#002115]/50"></i>
+        </button>
+      </div>
+      <!-- Class filter -->
+      <select id="class-filter"
+              class="px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115]/70 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 min-w-[160px]">
+        <option value="">All Classes</option>
+        <% classes.filter(c => c !== 'All Classes').forEach(c => { %>
+        <option value="<%= c %>"><%= c %></option>
+        <% }) %>
+      </select>
+      <!-- Level filter -->
+      <select id="level-filter"
+              class="px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115]/70 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 min-w-[150px]">
+        <option value="">All Levels</option>
+        <option value="A1">Novice (A1)</option>
+        <option value="A2">Elementary (A2)</option>
+        <option value="B1">Intermediate (B1)</option>
+        <option value="B2">Advanced (B2)</option>
+      </select>
+      <!-- Activity filter -->
+      <select id="activity-filter"
+              class="px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115]/70 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 min-w-[140px]">
+        <option value="">All Activity</option>
+        <option value="active">Active Today</option>
+        <option value="idle">Idle (2–7 days)</option>
+        <option value="inactive">Inactive (7d+)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Results count -->
+  <div class="flex items-center justify-between mb-4">
+    <p class="text-xs text-[#002115]/40">
+      Showing <span id="visible-count"><%= students.length %></span> of <%= students.length %> students
+    </p>
+    <select id="sort-by" class="text-xs border border-[#e8e4dc] bg-white text-[#002115]/60 px-3 py-1.5 rounded-lg focus:outline-none">
+      <option value="name">Sort: Name A–Z</option>
+      <option value="level">Sort: Level</option>
+      <option value="articles">Sort: Most Articles</option>
+      <option value="streak">Sort: Streak</option>
+      <option value="active">Sort: Recently Active</option>
+    </select>
+  </div>
+
+  <!-- ── Student Table ── -->
+  <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden">
+    <table class="w-full text-sm" id="student-table">
+      <thead>
+        <tr class="border-b border-[#e8e4dc] bg-[#f8f6f0]">
+          <th class="text-left px-6 py-3.5 text-xs font-semibold text-[#002115]/50 uppercase tracking-wider">Student</th>
+          <th class="text-left px-4 py-3.5 text-xs font-semibold text-[#002115]/50 uppercase tracking-wider hidden sm:table-cell">Class</th>
+          <th class="text-left px-4 py-3.5 text-xs font-semibold text-[#002115]/50 uppercase tracking-wider">Level</th>
+          <th class="text-left px-4 py-3.5 text-xs font-semibold text-[#002115]/50 uppercase tracking-wider hidden md:table-cell">Articles</th>
+          <th class="text-left px-4 py-3.5 text-xs font-semibold text-[#002115]/50 uppercase tracking-wider hidden md:table-cell">Vocab</th>
+          <th class="text-left px-4 py-3.5 text-xs font-semibold text-[#002115]/50 uppercase tracking-wider hidden lg:table-cell">Streak</th>
+          <th class="text-left px-4 py-3.5 text-xs font-semibold text-[#002115]/50 uppercase tracking-wider hidden lg:table-cell">Last Active</th>
+          <th class="px-4 py-3.5"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#e8e4dc]" id="student-tbody">
+        <% students.forEach(s => {
+          const diff = Date.now() - new Date(s.lastActive);
+          const activityStatus = diff < 86400000 ? 'active' : diff < 7*86400000 ? 'idle' : 'inactive';
+          const dotColor = activityStatus === 'active' ? 'bg-[#3ecf8e]' : activityStatus === 'idle' ? 'bg-amber-400' : 'bg-[#002115]/20';
+        %>
+        <tr class="student-row hover:bg-[#f8f6f0] transition-colors"
+            data-name="<%= (s.firstName + ' ' + s.lastName).toLowerCase() %>"
+            data-email="<%= s.email.toLowerCase() %>"
+            data-level="<%= s.level %>"
+            data-class="<%= s.enrolledClass %>"
+            data-activity="<%= activityStatus %>"
+            data-articles="<%= s.articleCount %>"
+            data-streak="<%= s.streak %>">
+          <!-- Student info -->
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-[#002115] text-[#3ecf8e] flex items-center justify-center text-xs font-bold flex-shrink-0">
+                <%= s.firstName[0] %><%= s.lastName[0] %>
+              </div>
+              <div>
+                <p class="font-semibold text-[#002115]"><%= s.firstName %> <%= s.lastName %></p>
+                <p class="text-xs text-[#002115]/40"><%= s.email %></p>
+              </div>
+            </div>
+          </td>
+          <!-- Class -->
+          <td class="px-4 py-4 hidden sm:table-cell">
+            <span class="text-xs text-[#002115]/60"><%= s.enrolledClass %></span>
+          </td>
+          <!-- Level -->
+          <td class="px-4 py-4">
+            <span class="<%= levelBadge[s.level] %> text-[10px] font-semibold px-2.5 py-1 rounded-full"><%= s.level %></span>
+          </td>
+          <!-- Articles -->
+          <td class="px-4 py-4 hidden md:table-cell">
+            <span class="font-mono text-sm text-[#002115] font-medium"><%= s.articleCount %></span>
+          </td>
+          <!-- Vocab -->
+          <td class="px-4 py-4 hidden md:table-cell">
+            <span class="font-mono text-sm text-[#002115] font-medium"><%= s.vocabCount %></span>
+          </td>
+          <!-- Streak -->
+          <td class="px-4 py-4 hidden lg:table-cell">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="flame" class="w-3.5 h-3.5 <%= s.streak > 0 ? 'text-orange-400' : 'text-[#002115]/20' %>"></i>
+              <span class="text-sm text-[#002115]"><%= s.streak %>d</span>
+            </div>
+          </td>
+          <!-- Last active -->
+          <td class="px-4 py-4 hidden lg:table-cell">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full <%= dotColor %> flex-shrink-0"></span>
+              <span class="text-xs text-[#002115]/50"><%= timeAgo(s.lastActive) %></span>
+            </div>
+          </td>
+          <!-- Actions -->
+          <td class="px-4 py-4">
+            <div class="flex items-center gap-1 justify-end">
+              <a href="/teacher/student/<%= s._id %>"
+                 class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#002115] hover:text-[#3ecf8e] text-[#002115]/30 transition-all"
+                 title="View profile">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              </a>
+              <button onclick="assignToStudent('<%= s._id %>', '<%= s.firstName %>')"
+                      class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#002115] hover:text-[#3ecf8e] text-[#002115]/30 transition-all"
+                      title="Assign article">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="removeStudent('<%= s._id %>', '<%= s.firstName %> <%= s.lastName %>')"
+                      class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 hover:text-red-500 text-[#002115]/30 transition-all"
+                      title="Remove from class">
+                <i data-lucide="user-minus" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <!-- No results row -->
+    <div id="no-results" class="hidden text-center py-16">
+      <i data-lucide="search-x" class="w-10 h-10 text-[#002115]/20 mx-auto mb-3"></i>
+      <p class="font-display text-lg text-[#002115]/40">No students match your search</p>
+      <button onclick="clearAll()" class="mt-3 text-sm text-[#3ecf8e] hover:underline">Clear filters</button>
+    </div>
+
+    <!-- Empty state -->
+    <% if (!students.length) { %>
+    <div class="text-center py-16">
+      <i data-lucide="users" class="w-10 h-10 text-[#002115]/15 mx-auto mb-3"></i>
+      <p class="font-display text-lg text-[#002115]/40">No students enrolled yet</p>
+      <p class="text-sm text-[#002115]/30 mt-1 mb-5">Share your class code or add students by email.</p>
+      <a href="/teacher/dashboard"
+         class="inline-flex items-center gap-2 bg-[#002115] text-white text-sm font-semibold px-5 py-2.5 rounded-xl">
+        <i data-lucide="user-plus" class="w-4 h-4 text-[#3ecf8e]"></i> Enroll Students
+      </a>
+    </div>
+    <% } %>
+  </div>
+
+  <!-- ── Assign modal ── -->
+  <div id="assign-modal" class="hidden fixed inset-0 bg-[#002115]/50 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl shadow-lift w-full max-w-md overflow-hidden">
+      <div class="h-1 bg-gradient-to-r from-[#002115] via-[#3ecf8e] to-[#002115]"></div>
+      <div class="px-6 py-5 border-b border-[#e8e4dc] flex items-center justify-between">
+        <h3 class="font-display font-semibold text-lg text-[#002115]">Assign Article</h3>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-lg hover:bg-[#f8f6f0] flex items-center justify-center text-[#002115]/40">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form method="POST" action="/teacher/assign-student" class="p-6 space-y-4">
+        <input type="hidden" name="studentId" id="modal-student-id" />
+        <p class="text-sm text-[#002115]/60">Assigning to: <span id="modal-student-name" class="font-semibold text-[#002115]"></span></p>
+        <div>
+          <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">Article URL</label>
+          <input type="url" name="url" placeholder="https://example.com/article" required
+                 class="w-full px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] placeholder-[#002115]/30 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">Level</label>
+            <select name="level" class="w-full px-3 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40">
+              <option value="A1">Novice (A1)</option>
+              <option value="A2">Elementary (A2)</option>
+              <option value="B1" selected>Intermediate (B1)</option>
+              <option value="B2">Advanced (B2)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#002115]/60 mb-1.5">Due Date</label>
+            <input type="date" name="dueDate"
+                   class="w-full px-3 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40" />
+          </div>
+        </div>
+        <button type="submit"
+                class="w-full flex items-center justify-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white font-semibold text-sm py-3.5 rounded-xl transition-all active:scale-95">
+          <i data-lucide="send" class="w-4 h-4 text-[#3ecf8e]"></i> Send Assignment
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // ── Filter + search ────────────────────────────────────────────────────────
+  function applyFilters() {
+    const q        = document.getElementById('student-search').value.toLowerCase().trim();
+    const cls      = document.getElementById('class-filter').value;
+    const level    = document.getElementById('level-filter').value;
+    const activity = document.getElementById('activity-filter').value;
+    const rows     = document.querySelectorAll('.student-row');
+    let visible    = 0;
+
+    rows.forEach(r => {
+      const matchQ   = !q        || r.dataset.name.includes(q)   || r.dataset.email.includes(q);
+      const matchCls = !cls      || r.dataset.class    === cls;
+      const matchLvl = !level    || r.dataset.level    === level;
+      const matchAct = !activity || r.dataset.activity === activity;
+      const show = matchQ && matchCls && matchLvl && matchAct;
+      r.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    document.getElementById('visible-count').textContent = visible;
+    document.getElementById('no-results').classList.toggle('hidden', visible > 0 || rows.length === 0);
+  }
+
+  document.getElementById('student-search').addEventListener('input', function() {
+    document.getElementById('search-clear').classList.toggle('hidden', !this.value);
+    document.getElementById('search-clear').classList.toggle('flex',   !!this.value);
+    applyFilters();
+  });
+  ['class-filter','level-filter','activity-filter','sort-by'].forEach(id => {
+    document.getElementById(id).addEventListener('change', applyFilters);
+  });
+
+  function clearSearch() {
+    document.getElementById('student-search').value = '';
+    document.getElementById('search-clear').classList.add('hidden');
+    applyFilters();
+  }
+  function clearAll() {
+    ['student-search','class-filter','level-filter','activity-filter'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('search-clear').classList.add('hidden');
+    applyFilters();
+  }
+
+  // ── Assign modal ───────────────────────────────────────────────────────────
+  function assignToStudent(id, name) {
+    document.getElementById('modal-student-id').value   = id;
+    document.getElementById('modal-student-name').textContent = name;
+    document.getElementById('assign-modal').classList.remove('hidden');
+  }
+  function closeModal() {
+    document.getElementById('assign-modal').classList.add('hidden');
+  }
+  document.getElementById('assign-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── Remove student ─────────────────────────────────────────────────────────
+  function removeStudent(id, name) {
+    if (!confirm('Remove ' + name + ' from your class?')) return;
+    fetch('/teacher/students/remove', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ studentId: id }),
+    }).then(() => {
+      document.querySelector('[data-name="' + name.toLowerCase() + '"]')?.remove();
+      applyFilters();
+    });
+  }
+</script>

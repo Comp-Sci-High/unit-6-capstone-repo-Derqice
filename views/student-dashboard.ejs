@@ -1,3 +1,5 @@
+<%# ── student-dashboard.ejs ── Student View ──────────────────────────── %>
+
 <%
 // ── Sample data (replace with real DB queries in your controller) ──
 const student = typeof user !== 'undefined' ? user : { name: 'Alex Rivera', level: 'B1', avatar: null };
@@ -37,10 +39,16 @@ const levelBadge = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-inte
         </span>
       </p>
     </div>
-    <a href="/app"
-       class="inline-flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-card hover:shadow-lift transition-all duration-200 active:scale-95 self-start sm:self-auto">
-      <i data-lucide="plus" class="w-4 h-4 text-[#3ecf8e]"></i> Simplify New Article
-    </a>
+    <div class="flex items-center gap-3 self-start sm:self-auto">
+      <a href="/enroll"
+         class="inline-flex items-center gap-2 border border-[#002115]/15 hover:border-[#3ecf8e] text-[#002115]/70 hover:text-[#002115] text-sm font-medium px-5 py-3 rounded-xl transition-all duration-200">
+        <i data-lucide="graduation-cap" class="w-4 h-4"></i> Enroll in Class
+      </a>
+      <a href="/app"
+         class="inline-flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-card hover:shadow-lift transition-all duration-200 active:scale-95">
+        <i data-lucide="plus" class="w-4 h-4 text-[#3ecf8e]"></i> Simplify New Article
+      </a>
+    </div>
   </div>
 
   <!-- ── Stats strip ── -->
@@ -179,14 +187,16 @@ const levelBadge = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-inte
           <!-- Word list -->
           <ul id="vocab-list" class="divide-y divide-[#e8e4dc] max-h-[480px] overflow-y-auto">
             <% vocabBank.forEach((v, i) => { %>
-            <li class="vocab-item px-5 py-4 hover:bg-[#f8f6f0] transition-colors group" data-word="<%= v.word.toLowerCase() %>">
+            <li class="vocab-item px-5 py-4 hover:bg-[#f8f6f0] transition-colors group"
+                data-word="<%= v.word.toLowerCase() %>"
+                data-definition="<%= v.definition.toLowerCase() %>">
               <div class="flex items-start justify-between gap-3">
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 mb-1">
                     <span class="font-mono text-[10px] text-[#3ecf8e] font-medium">#<%= String(i+1).padStart(2,'0') %></span>
-                    <span class="font-display font-semibold text-sm text-[#002115]"><%= v.word %></span>
+                    <span class="font-display font-semibold text-sm text-[#002115] vocab-word"><%= v.word %></span>
                   </div>
-                  <p class="text-xs text-[#002115]/55 leading-relaxed"><%= v.definition %></p>
+                  <p class="text-xs text-[#002115]/55 leading-relaxed vocab-definition"><%= v.definition %></p>
                 </div>
                 <button class="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-[#fff1f2] text-[#002115]/20 hover:text-[#f87171] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 duration-200"
                         title="Remove word" onclick="removeWord(this, '<%= v.word %>')">
@@ -195,6 +205,11 @@ const levelBadge = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-inte
               </div>
             </li>
             <% }) %>
+            <!-- No results message -->
+            <li id="vocab-no-results" class="hidden px-5 py-8 text-center text-sm text-[#002115]/30">
+              <i data-lucide="search-x" class="w-6 h-6 mx-auto mb-2 opacity-40"></i>
+              No words match your search.
+            </li>
           </ul>
 
           <!-- Footer -->
@@ -213,12 +228,21 @@ const levelBadge = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-inte
 <script>
   lucide.createIcons();
 
-  // Vocab search filter
+  // Vocab search filter — searches both word and definition
   document.getElementById('vocab-search').addEventListener('input', function() {
-    const q = this.value.toLowerCase();
-    document.querySelectorAll('.vocab-item').forEach(el => {
-      el.style.display = el.dataset.word.includes(q) ? '' : 'none';
+    const q       = this.value.toLowerCase().trim();
+    const items   = document.querySelectorAll('.vocab-item');
+    let   visible = 0;
+
+    items.forEach(el => {
+      const matchWord = el.dataset.word.includes(q);
+      const matchDef  = el.dataset.definition.includes(q);
+      const show      = !q || matchWord || matchDef;
+      el.style.display = show ? '' : 'none';
+      if (show) visible++;
     });
+
+    document.getElementById('vocab-no-results').classList.toggle('hidden', visible > 0 || !q);
   });
 
   function removeWord(btn, word) {

@@ -1,0 +1,103 @@
+<%# ── about.ejs ── About Page ────────────────────────────────────────────── %>
+
+<!-- Hero -->
+<section class="bg-[#002115] relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.06]"
+       style="background-image: linear-gradient(#3ecf8e 1px, transparent 1px), linear-gradient(90deg, #3ecf8e 1px, transparent 1px); background-size: 48px 48px;"></div>
+  <div class="relative max-w-4xl mx-auto px-6 py-20 text-center">
+    <div class="inline-flex items-center gap-2 bg-[#3ecf8e]/15 border border-[#3ecf8e]/25 rounded-full px-4 py-1.5 mb-6">
+      <i data-lucide="info" class="w-3.5 h-3.5 text-[#3ecf8e]"></i>
+      <span class="text-[#3ecf8e] text-xs font-medium tracking-widest uppercase">About The Dial</span>
+    </div>
+    <h1 class="font-display font-bold text-5xl text-white mb-4">Built for Readers.<br /><span class="text-[#3ecf8e]">By CompSciHigh.</span></h1>
+    <p class="text-white/50 text-lg max-w-xl mx-auto leading-relaxed">
+      The Dial is a language simplification platform designed to help every CompSciHigh student access any text — regardless of their current reading level or native language.
+    </p>
+  </div>
+  <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-[#f8f6f0]"></div>
+</section>
+
+<div class="max-w-4xl mx-auto px-6 py-16 space-y-16">
+
+  <!-- Mission -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+    <div>
+      <h2 class="font-display font-bold text-3xl text-[#002115] mb-4">Our Mission</h2>
+      <p class="text-[#002115]/60 leading-relaxed mb-4">
+        Language should never be a barrier to learning. The Dial was created to make complex academic content accessible to every student — whether English is your first language or your fifth, and whether you're just starting to read or pushing toward mastery.
+      </p>
+      <p class="text-[#002115]/60 leading-relaxed">
+        By combining CEFR reading levels with AI-powered simplification, The Dial meets students exactly where they are and helps them grow from there.
+      </p>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <% const stats = [
+        { icon: 'languages',      value: '16+',    label: 'Languages Supported' },
+        { icon: 'graduation-cap', value: 'A1–B2',  label: 'CEFR Levels Covered' },
+        { icon: 'book-open',      value: '∞',      label: 'Articles Supported'  },
+        { icon: 'users',          value: '1',      label: 'School (for now)'    },
+      ]; %>
+      <% stats.forEach(s => { %>
+      <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card p-5 text-center">
+        <div class="w-9 h-9 rounded-xl bg-[#002115] flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="<%= s.icon %>" class="w-4 h-4 text-[#3ecf8e]"></i>
+        </div>
+        <p class="font-display font-bold text-2xl text-[#002115]"><%= s.value %></p>
+        <p class="text-xs text-[#002115]/50 mt-0.5"><%= s.label %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div>
+    <h2 class="font-display font-bold text-3xl text-[#002115] mb-8 text-center">How The Dial Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <% const steps = [
+        { icon: 'clipboard-paste', num: '01', title: 'You Paste Content',   desc: 'Drop in any URL or block of text — news articles, textbook passages, research papers, anything.' },
+        { icon: 'sliders-horizontal', num: '02', title: 'You Set the Dial', desc: 'Choose your CEFR reading level (A1 to B2) and the language you want the output in.' },
+        { icon: 'sparkles',        num: '03', title: 'AI Does the Rest',    desc: 'Google Gemini rewrites the content at your level in your language, and pulls out key vocab words.' },
+      ]; %>
+      <% steps.forEach(s => { %>
+      <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card p-6">
+        <div class="w-10 h-10 rounded-xl bg-[#002115] flex items-center justify-center mb-4">
+          <i data-lucide="<%= s.icon %>" class="w-5 h-5 text-[#3ecf8e]"></i>
+        </div>
+        <span class="font-mono text-xs text-[#3ecf8e] font-medium"><%= s.num %></span>
+        <h3 class="font-display font-semibold text-[#002115] text-lg mt-1 mb-2"><%= s.title %></h3>
+        <p class="text-sm text-[#002115]/55 leading-relaxed"><%= s.desc %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Tech stack -->
+  <div class="bg-[#002115] rounded-2xl p-10 text-center">
+    <h2 class="font-display font-bold text-3xl text-white mb-3">Built With</h2>
+    <p class="text-white/40 text-sm mb-8">Open-source tools and school-safe AI powering every simplification.</p>
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <% const tech = ['Node.js', 'Express', 'EJS', 'Tailwind CSS', 'MongoDB', 'Google Gemini', 'Lucide Icons']; %>
+      <% tech.forEach(t => { %>
+      <span class="bg-white/10 border border-white/15 text-white/70 text-sm font-medium px-4 py-2 rounded-full">
+        <%= t %>
+      </span>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Team / school -->
+  <div class="text-center">
+    <h2 class="font-display font-bold text-3xl text-[#002115] mb-3">A CompSciHigh Project</h2>
+    <p class="text-[#002115]/55 max-w-xl mx-auto leading-relaxed mb-8">
+      The Dial was designed and built by students and faculty at CompSciHigh as part of the Unit 6 Capstone project. It is maintained exclusively for CompSciHigh community members.
+    </p>
+    <a href="/signup"
+       class="inline-flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white font-semibold px-8 py-3.5 rounded-xl shadow-card hover:shadow-lift transition-all active:scale-95">
+      <i data-lucide="user-plus" class="w-4 h-4 text-[#3ecf8e]"></i>
+      Join The Dial
+    </a>
+  </div>
+
+</div>
+
+<script>lucide.createIcons();</script>

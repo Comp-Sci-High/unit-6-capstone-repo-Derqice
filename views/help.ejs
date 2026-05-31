@@ -1,0 +1,166 @@
+<%# ── help.ejs ── Help & FAQ Page ───────────────────────────────────────── %>
+
+<!-- Hero -->
+<section class="bg-[#002115] relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.06]"
+       style="background-image: linear-gradient(#3ecf8e 1px, transparent 1px), linear-gradient(90deg, #3ecf8e 1px, transparent 1px); background-size: 48px 48px;"></div>
+  <div class="relative max-w-4xl mx-auto px-6 py-20 text-center">
+    <div class="inline-flex items-center gap-2 bg-[#3ecf8e]/15 border border-[#3ecf8e]/25 rounded-full px-4 py-1.5 mb-6">
+      <i data-lucide="help-circle" class="w-3.5 h-3.5 text-[#3ecf8e]"></i>
+      <span class="text-[#3ecf8e] text-xs font-medium tracking-widest uppercase">Help Center</span>
+    </div>
+    <h1 class="font-display font-bold text-5xl text-white mb-4">How Can We <span class="text-[#3ecf8e]">Help?</span></h1>
+    <p class="text-white/50 text-lg max-w-xl mx-auto mb-8">Everything you need to know about using The Dial.</p>
+    <!-- Search bar (cosmetic for now) -->
+    <div class="relative max-w-md mx-auto">
+      <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#002115]/40"></i>
+      <input type="text" id="faq-search" placeholder="Search for help…"
+             class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white border border-white/20 text-sm text-[#002115] placeholder-[#002115]/40 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 shadow-card" />
+    </div>
+  </div>
+  <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-[#f8f6f0]"></div>
+</section>
+
+<div class="max-w-4xl mx-auto px-6 py-16">
+
+  <!-- Quick links -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+    <% const quickLinks = [
+      { icon: 'user-plus',          label: 'Getting Started', href: '#getting-started' },
+      { icon: 'sliders-horizontal', label: 'Using The Dial',  href: '#using-the-dial'  },
+      { icon: 'graduation-cap',     label: 'For Students',    href: '#students'        },
+      { icon: 'book-open',          label: 'For Teachers',    href: '#teachers'        },
+    ]; %>
+    <% quickLinks.forEach(l => { %>
+    <a href="<%= l.href %>"
+       class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card p-5 text-center hover:shadow-lift hover:border-[#3ecf8e]/40 transition-all group">
+      <div class="w-9 h-9 rounded-xl bg-[#002115] flex items-center justify-center mx-auto mb-3 group-hover:bg-[#3ecf8e] transition-colors">
+        <i data-lucide="<%= l.icon %>" class="w-4 h-4 text-[#3ecf8e] group-hover:text-[#002115] transition-colors"></i>
+      </div>
+      <p class="text-sm font-semibold text-[#002115]"><%= l.label %></p>
+    </a>
+    <% }) %>
+  </div>
+
+  <%
+  const faqGroups = [
+    {
+      id: 'getting-started',
+      icon: 'user-plus',
+      title: 'Getting Started',
+      faqs: [
+        { q: 'Who can use The Dial?', a: 'The Dial is exclusively for CompSciHigh students and faculty. You must have a valid @compscihigh.org email address to create an account.' },
+        { q: 'How do I create an account?', a: 'Click "Sign Up" on the home page. Fill in your name, school email, choose whether you\'re a student or teacher, and set a password. You\'ll be logged in immediately after.' },
+        { q: 'Can I sign in with Google?', a: 'Google sign-in is coming soon. For now, use the email and password form on the login page.' },
+        { q: 'I forgot my password. What do I do?', a: 'Password reset is coming soon. In the meantime, contact your CompSciHigh administrator to have your account reset.' },
+      ]
+    },
+    {
+      id: 'using-the-dial',
+      icon: 'sliders-horizontal',
+      title: 'Using The Dial',
+      faqs: [
+        { q: 'What can I paste into The Dial?', a: 'You can paste a full URL (e.g. a BBC article link) or any block of raw text — textbook passages, news articles, research papers, anything you can copy and paste.' },
+        { q: 'What do the reading levels mean?', a: 'The levels follow the CEFR (Common European Framework of Reference for Languages): A1 is complete beginner, A2 is elementary, B1 is intermediate, and B2 is upper-intermediate. Choose the level that matches where you are now, or go one step above to challenge yourself.' },
+        { q: 'Which languages are supported?', a: 'The Dial supports 16+ languages including English, Spanish, French, Portuguese, Mandarin, Arabic, Hindi, Swahili, Haitian Creole, Urdu, Bengali, Russian, Japanese, Korean, German, and Italian. You can simplify content from any language into any other language.' },
+        { q: 'How long does simplification take?', a: 'Usually 5–15 seconds depending on the length of the content. Longer articles take a bit more time.' },
+        { q: 'Can I simplify a URL directly?', a: 'Yes — paste the full URL starting with http:// or https:// and The Dial will fetch and simplify the article at that link.' },
+      ]
+    },
+    {
+      id: 'students',
+      icon: 'graduation-cap',
+      title: 'For Students',
+      faqs: [
+        { q: 'What is the Vocab Bank?', a: 'Every time you simplify an article, key vocabulary words from that text are automatically added to your personal Vocab Bank on your dashboard. You can search and review them anytime, and export them as flashcards.' },
+        { q: 'How do I save an article to my library?', a: 'On the result page after simplifying, click "Save to My Library." You can then access it from your dashboard under My Reading List.' },
+        { q: 'How do I track my reading progress?', a: 'Your dashboard shows a progress bar on each saved article. The bar fills as you scroll through the article. Completed articles are marked with a green checkmark.' },
+        { q: 'Can I remove words from my Vocab Bank?', a: 'Yes — hover over any word in your Vocab Bank on the dashboard and click the X button to remove it.' },
+      ]
+    },
+    {
+      id: 'teachers',
+      icon: 'book-open',
+      title: 'For Teachers',
+      faqs: [
+        { q: 'How do I assign a reading to my class?', a: 'From your teacher dashboard, use the "Assign Reading" form. Paste the article URL, select a difficulty level, optionally add a due date and note, and click "Assign to Class." All students in your class will see it in their library.' },
+        { q: 'What does the Class Activity chart show?', a: 'The bar chart shows how many articles your students simplified each day over the past 7 days. It helps you spot when engagement drops off.' },
+        { q: 'What are Top Struggle Words?', a: 'These are vocabulary words that students in your class clicked to look up most often over the last 30 days. It\'s a useful signal for which concepts need more classroom attention.' },
+        { q: 'Can I see an individual student\'s activity?', a: 'From the teacher dashboard, click "View All Students" to see each student\'s reading level, articles read, and activity status.' },
+      ]
+    },
+  ];
+  %>
+
+  <!-- FAQ Groups -->
+  <div class="space-y-10">
+    <% faqGroups.forEach(group => { %>
+    <div id="<%= group.id %>">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-9 h-9 rounded-xl bg-[#002115] flex items-center justify-center">
+          <i data-lucide="<%= group.icon %>" class="w-4 h-4 text-[#3ecf8e]"></i>
+        </div>
+        <h2 class="font-display font-bold text-2xl text-[#002115]"><%= group.title %></h2>
+      </div>
+
+      <div class="space-y-3">
+        <% group.faqs.forEach((faq, i) => { %>
+        <div class="faq-item bg-white rounded-2xl border border-[#e8e4dc] shadow-card overflow-hidden"
+             data-question="<%= faq.q.toLowerCase() %>">
+          <button class="w-full flex items-center justify-between px-6 py-4 text-left group"
+                  onclick="toggleFaq(this)">
+            <span class="font-semibold text-sm text-[#002115] pr-4"><%= faq.q %></span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-[#002115]/40 flex-shrink-0 transition-transform duration-200"></i>
+          </button>
+          <div class="faq-answer hidden px-6 pb-5">
+            <p class="text-sm text-[#002115]/60 leading-relaxed border-t border-[#e8e4dc] pt-4"><%= faq.a %></p>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- Still need help -->
+  <div class="mt-16 bg-[#002115] rounded-2xl p-10 text-center">
+    <div class="w-12 h-12 rounded-2xl bg-[#3ecf8e]/20 border border-[#3ecf8e]/30 flex items-center justify-center mx-auto mb-4">
+      <i data-lucide="message-circle" class="w-6 h-6 text-[#3ecf8e]"></i>
+    </div>
+    <h3 class="font-display font-bold text-2xl text-white mb-2">Still Need Help?</h3>
+    <p class="text-white/50 text-sm mb-7 max-w-sm mx-auto">Can't find what you're looking for? Reach out to the CompSciHigh team.</p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="mailto:admin@compscihigh.org"
+         class="inline-flex items-center gap-2 bg-[#3ecf8e]/20 hover:bg-[#3ecf8e]/30 border border-[#3ecf8e]/30 text-[#3ecf8e] text-sm font-semibold px-6 py-3 rounded-xl transition-all">
+        <i data-lucide="mail" class="w-4 h-4"></i>
+        Email Us
+      </a>
+      <a href="/about"
+         class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/15 text-white/70 text-sm font-medium px-6 py-3 rounded-xl transition-all">
+        <i data-lucide="info" class="w-4 h-4"></i>
+        About The Dial
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  lucide.createIcons();
+
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const icon   = btn.querySelector('[data-lucide="chevron-down"]');
+    const open   = !answer.classList.contains('hidden');
+    answer.classList.toggle('hidden', open);
+    icon.style.transform = open ? '' : 'rotate(180deg)';
+  }
+
+  // Live search filter
+  document.getElementById('faq-search').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.faq-item').forEach(el => {
+      el.style.display = el.dataset.question.includes(q) ? '' : 'none';
+    });
+  });
+</script>

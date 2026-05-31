@@ -1,0 +1,331 @@
+<%# ── library.ejs ── Main Home / Article Library ────────────────────────── %>
+
+<%
+const currentUser = typeof user !== 'undefined' ? user : { name: 'Alex Rivera', role: 'student', level: 'B1' };
+const articles    = typeof readingList !== 'undefined' ? readingList : [
+  { _id: '1', title: 'How Computers Understand Language',     source: 'MIT Technology Review', level: 'B1', language: 'English', progress: 72,  isComplete: false, createdAt: new Date(Date.now() - 2*86400000) },
+  { _id: '2', title: 'The History of the Internet in Brief', source: 'Wikipedia',              level: 'A2', language: 'Spanish', progress: 30,  isComplete: false, createdAt: new Date(Date.now() - 4*86400000) },
+  { _id: '3', title: 'What is Machine Learning?',            source: 'BBC Future',             level: 'A1', language: 'English', progress: 100, isComplete: true,  createdAt: new Date(Date.now() - 7*86400000) },
+  { _id: '4', title: 'Sorting Algorithms Explained Simply',  source: 'CS Fundamentals Blog',  level: 'B2', language: 'French',  progress: 0,   isComplete: false, createdAt: new Date() },
+  { _id: '5', title: 'Introduction to Binary Trees',         source: 'Khan Academy',           level: 'B1', language: 'English', progress: 55,  isComplete: false, createdAt: new Date(Date.now() - 86400000) },
+  { _id: '6', title: 'The Turing Test Explained',            source: 'New Scientist',          level: 'B2', language: 'English', progress: 100, isComplete: true,  createdAt: new Date(Date.now() - 10*86400000) },
+];
+
+const levelBadge = { A1: 'badge-novice', A2: 'badge-elementary', B1: 'badge-intermediate', B2: 'badge-advanced' };
+const levelLabel = { A1: 'Novice', A2: 'Elementary', B1: 'Intermediate', B2: 'Advanced' };
+
+function timeAgo(date) {
+  const diff = Math.floor((Date.now() - new Date(date)) / 1000);
+  if (diff < 60)     return 'Just now';
+  if (diff < 3600)   return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400)  return Math.floor(diff/3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+  return Math.floor(diff/604800) + 'w ago';
+}
+%>
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+  <!-- ── Page Header ── -->
+  <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-10">
+    <div>
+      <p class="text-xs text-[#002115]/40 uppercase tracking-widest font-medium mb-1">
+        <%= currentUser.role === 'teacher' ? 'Teacher Portal' : 'Student Portal' %> · My Library
+      </p>
+      <h1 class="font-display font-bold text-3xl text-[#002115]">My Articles</h1>
+      <p class="text-sm text-[#002115]/50 mt-1"><%= articles.length %> saved article<%= articles.length !== 1 ? 's' : '' %></p>
+    </div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <% if (currentUser.role === 'teacher') { %>
+      <a href="/teacher/dashboard"
+         class="inline-flex items-center gap-2 border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-700 text-sm font-medium px-4 py-2.5 rounded-xl transition-all">
+        <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Teacher Tools
+      </a>
+      <% } %>
+      <a href="/app"
+         class="inline-flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-card hover:shadow-lift transition-all active:scale-95">
+        <i data-lucide="plus" class="w-4 h-4 text-[#3ecf8e]"></i> Simplify New Article
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Search & Filter Bar ── -->
+  <div class="bg-white rounded-2xl border border-[#e8e4dc] shadow-card p-4 mb-6">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <!-- Search -->
+      <div class="relative flex-1">
+        <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#002115]/30"></i>
+        <input type="text" id="article-search" placeholder="Search by title or source…"
+               class="w-full pl-11 pr-10 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115] placeholder-[#002115]/30 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 focus:border-[#3ecf8e] transition-all" />
+        <button id="search-clear" onclick="clearSearch()"
+                class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#002115]/10 hover:bg-[#002115]/20 items-center justify-center transition-all">
+          <i data-lucide="x" class="w-3 h-3 text-[#002115]/50"></i>
+        </button>
+      </div>
+      <!-- Level -->
+      <select id="level-filter" class="px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115]/70 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 min-w-[150px]">
+        <option value="">All Levels</option>
+        <option value="A1">Novice (A1)</option>
+        <option value="A2">Elementary (A2)</option>
+        <option value="B1">Intermediate (B1)</option>
+        <option value="B2">Advanced (B2)</option>
+      </select>
+      <!-- Language -->
+      <select id="lang-filter" class="px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115]/70 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 min-w-[140px]">
+        <option value="">All Languages</option>
+        <option value="English">English</option>
+        <option value="Spanish">Spanish</option>
+        <option value="French">French</option>
+        <option value="Portuguese">Portuguese</option>
+        <option value="Arabic">Arabic</option>
+        <option value="Hindi">Hindi</option>
+      </select>
+      <!-- Status -->
+      <select id="status-filter" class="px-4 py-3 rounded-xl border border-[#e8e4dc] bg-[#fdfcf9] text-sm text-[#002115]/70 focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/40 min-w-[140px]">
+        <option value="">All Status</option>
+        <option value="in-progress">In Progress</option>
+        <option value="complete">Complete</option>
+        <option value="not-started">Not Started</option>
+      </select>
+      <!-- View toggle -->
+      <div class="flex items-center gap-1 bg-[#f8f6f0] rounded-xl p-1 border border-[#e8e4dc]">
+        <button id="btn-grid" onclick="setView('grid')" title="Grid view"
+                class="w-9 h-9 rounded-lg bg-[#002115] text-[#3ecf8e] flex items-center justify-center transition-all">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+        </button>
+        <button id="btn-list" onclick="setView('list')" title="List view"
+                class="w-9 h-9 rounded-lg text-[#002115]/40 hover:text-[#002115] flex items-center justify-center transition-all">
+          <i data-lucide="list" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Filter chips -->
+    <div id="filter-chips" class="hidden items-center gap-2 mt-3 flex-wrap">
+      <span class="text-xs text-[#002115]/40">Filtering:</span>
+      <span id="chip-search" class="hidden items-center gap-1 bg-[#3ecf8e]/15 text-[#002115]/70 text-xs px-2.5 py-1 rounded-full"></span>
+      <span id="chip-level"  class="hidden items-center gap-1 bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full"></span>
+      <span id="chip-lang"   class="hidden items-center gap-1 bg-violet-50 text-violet-700 text-xs px-2.5 py-1 rounded-full"></span>
+      <span id="chip-status" class="hidden items-center gap-1 bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-full"></span>
+      <button onclick="clearAllFilters()" class="text-xs text-[#002115]/30 hover:text-red-500 transition-colors">Clear all</button>
+    </div>
+  </div>
+
+  <!-- Results bar -->
+  <div class="flex items-center justify-between mb-5">
+    <p class="text-xs text-[#002115]/40">
+      Showing <span id="visible-count"><%= articles.length %></span> of <%= articles.length %> articles
+    </p>
+    <select id="sort-filter" class="text-xs border border-[#e8e4dc] bg-white text-[#002115]/60 px-3 py-1.5 rounded-lg focus:outline-none">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+      <option value="title">A–Z</option>
+    </select>
+  </div>
+
+  <!-- ── Grid View ── -->
+  <div id="article-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <% articles.forEach(a => { %>
+    <% const status = a.isComplete ? 'complete' : a.progress > 0 ? 'in-progress' : 'not-started'; %>
+    <div class="article-card bg-white rounded-2xl border border-[#e8e4dc] shadow-card hover:shadow-lift transition-all duration-200 overflow-hidden flex flex-col group"
+         data-title="<%= a.title.toLowerCase() %>"
+         data-source="<%= (a.source||'').toLowerCase() %>"
+         data-level="<%= a.level %>"
+         data-lang="<%= a.language %>"
+         data-status="<%= status %>">
+      <div class="h-1 bg-gradient-to-r from-[#002115] to-[#3ecf8e]"></div>
+      <div class="p-5 flex flex-col flex-1">
+        <div class="flex items-center gap-2 mb-3 flex-wrap">
+          <span class="<%= levelBadge[a.level] %> text-[10px] font-semibold px-2 py-0.5 rounded-full"><%= levelLabel[a.level] %> · <%= a.level %></span>
+          <span class="bg-[#002115]/5 text-[#002115]/50 text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+            <i data-lucide="languages" class="w-2.5 h-2.5"></i><%= a.language %>
+          </span>
+          <% if (a.isComplete) { %>
+          <span class="text-[10px] font-semibold text-[#3ecf8e] flex items-center gap-0.5">
+            <i data-lucide="check-circle" class="w-3 h-3"></i> Done
+          </span>
+          <% } %>
+        </div>
+        <h3 class="font-display font-semibold text-[#002115] text-base leading-snug mb-1 group-hover:text-[#3ecf8e] transition-colors line-clamp-2"><%= a.title %></h3>
+        <p class="text-xs text-[#002115]/40 flex items-center gap-1 mb-4">
+          <i data-lucide="globe" class="w-3 h-3"></i>
+          <%= a.source || 'Pasted text' %> · <%= timeAgo(a.createdAt) %>
+        </p>
+        <% if (!a.isComplete && a.progress > 0) { %>
+        <div class="mb-4">
+          <div class="flex justify-between text-[10px] text-[#002115]/40 mb-1"><span>Progress</span><span><%= a.progress %>%</span></div>
+          <div class="w-full h-1.5 bg-[#e8e4dc] rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-[#3ecf8e] to-[#22a06b] rounded-full" style="width:<%= a.progress %>%"></div>
+          </div>
+        </div>
+        <% } %>
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-2 mt-3 pt-3 border-t border-[#e8e4dc]">
+          <a href="/article/<%= a._id %>"
+             class="flex-1 flex items-center justify-center gap-1.5 bg-[#002115] hover:bg-[#001a10] text-white text-xs font-semibold py-2.5 rounded-xl transition-all active:scale-95">
+            <i data-lucide="play" class="w-3.5 h-3.5 text-[#3ecf8e]"></i>
+            <%= a.isComplete ? 'Re-read' : a.progress > 0 ? 'Continue' : 'Start Reading' %>
+          </a>
+          <button onclick="removeArticle('<%= a._id %>', this)"
+                  class="w-9 h-9 flex items-center justify-center rounded-xl border border-[#e8e4dc] hover:border-red-300 hover:bg-red-50 text-[#002115]/20 hover:text-red-500 transition-all">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- ── List View ── -->
+  <div id="article-list" class="hidden space-y-3">
+    <% articles.forEach(a => { %>
+    <% const status = a.isComplete ? 'complete' : a.progress > 0 ? 'in-progress' : 'not-started'; %>
+    <div class="article-card-list bg-white rounded-2xl border border-[#e8e4dc] shadow-card hover:shadow-lift transition-all overflow-hidden"
+         data-title="<%= a.title.toLowerCase() %>"
+         data-source="<%= (a.source||'').toLowerCase() %>"
+         data-level="<%= a.level %>"
+         data-lang="<%= a.language %>"
+         data-status="<%= status %>">
+      <div class="flex items-center gap-4 p-4">
+        <div class="w-10 h-10 rounded-xl bg-[#002115] flex items-center justify-center flex-shrink-0">
+          <span class="font-mono text-[10px] font-bold text-[#3ecf8e]"><%= a.level %></span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-0.5">
+            <h3 class="font-semibold text-sm text-[#002115] truncate"><%= a.title %></h3>
+            <% if (a.isComplete) { %>
+            <span class="text-[10px] text-[#3ecf8e] font-semibold flex-shrink-0">✓ Done</span>
+            <% } %>
+          </div>
+          <p class="text-xs text-[#002115]/40"><%= a.source || 'Pasted text' %> · <%= a.language %> · <%= timeAgo(a.createdAt) %></p>
+          <% if (!a.isComplete && a.progress > 0) { %>
+          <div class="w-40 h-1 bg-[#e8e4dc] rounded-full overflow-hidden mt-1.5">
+            <div class="h-full bg-[#3ecf8e] rounded-full" style="width:<%= a.progress %>%"></div>
+          </div>
+          <% } %>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <a href="/article/<%= a._id %>"
+             class="flex items-center gap-1.5 bg-[#002115] hover:bg-[#001a10] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all">
+            <i data-lucide="play" class="w-3 h-3 text-[#3ecf8e]"></i>
+            <%= a.isComplete ? 'Re-read' : a.progress > 0 ? 'Continue' : 'Start' %>
+          </a>
+          <button onclick="removeArticle('<%= a._id %>', this)"
+                  class="w-8 h-8 flex items-center justify-center rounded-xl border border-[#e8e4dc] hover:border-red-300 hover:bg-red-50 text-[#002115]/20 hover:text-red-500 transition-all">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- No results -->
+  <div id="no-results" class="hidden text-center py-20">
+    <i data-lucide="search-x" class="w-12 h-12 text-[#002115]/20 mx-auto mb-4"></i>
+    <p class="font-display text-xl text-[#002115]/40">No articles found</p>
+    <p class="text-sm text-[#002115]/30 mt-2">Try a different search or filter.</p>
+    <button onclick="clearAllFilters()" class="mt-4 text-sm text-[#3ecf8e] hover:underline">Clear all filters</button>
+  </div>
+
+  <!-- Empty state -->
+  <% if (!articles.length) { %>
+  <div class="text-center py-24">
+    <i data-lucide="book-open" class="w-14 h-14 text-[#002115]/15 mx-auto mb-5"></i>
+    <p class="font-display text-2xl text-[#002115]/40 mb-2">Your library is empty</p>
+    <p class="text-sm text-[#002115]/30 mb-6">Simplify your first article to get started.</p>
+    <a href="/app" class="inline-flex items-center gap-2 bg-[#002115] hover:bg-[#001a10] text-white font-semibold px-6 py-3 rounded-xl shadow-card transition-all">
+      <i data-lucide="plus" class="w-4 h-4 text-[#3ecf8e]"></i> Simplify an Article
+    </a>
+  </div>
+  <% } %>
+
+</div>
+
+<script>
+  lucide.createIcons();
+  let currentView = 'grid';
+
+  function setView(v) {
+    currentView = v;
+    document.getElementById('article-grid').classList.toggle('hidden', v !== 'grid');
+    document.getElementById('article-list').classList.toggle('hidden', v !== 'list');
+    const activeClass = 'w-9 h-9 rounded-lg bg-[#002115] text-[#3ecf8e] flex items-center justify-center transition-all';
+    const inactiveClass = 'w-9 h-9 rounded-lg text-[#002115]/40 hover:text-[#002115] flex items-center justify-center transition-all';
+    document.getElementById('btn-grid').className = v === 'grid' ? activeClass : inactiveClass;
+    document.getElementById('btn-list').className = v === 'list' ? activeClass : inactiveClass;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const q      = document.getElementById('article-search').value.toLowerCase().trim();
+    const level  = document.getElementById('level-filter').value;
+    const lang   = document.getElementById('lang-filter').value;
+    const status = document.getElementById('status-filter').value;
+    const sel    = currentView === 'grid' ? '.article-card' : '.article-card-list';
+
+    let visible = 0;
+    document.querySelectorAll(sel).forEach(c => {
+      const show = (!q      || c.dataset.title.includes(q) || c.dataset.source.includes(q))
+                && (!level  || c.dataset.level  === level)
+                && (!lang   || c.dataset.lang   === lang)
+                && (!status || c.dataset.status === status);
+      c.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    document.getElementById('visible-count').textContent = visible;
+    document.getElementById('no-results').classList.toggle('hidden', visible > 0 || !document.querySelectorAll(sel).length);
+
+    // chips
+    const chips = document.getElementById('filter-chips');
+    const show  = q || level || lang || status;
+    chips.classList.toggle('hidden', !show);
+    chips.classList.toggle('flex',    !!show);
+    setChip('chip-search', q      ? '🔍 ' + q     : '');
+    setChip('chip-level',  level  ? '📊 ' + level  : '');
+    setChip('chip-lang',   lang   ? '🌐 ' + lang   : '');
+    setChip('chip-status', status ? '📖 ' + status : '');
+  }
+
+  function setChip(id, text) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.classList.toggle('hidden',       !text);
+    el.classList.toggle('inline-flex',  !!text);
+  }
+
+  function clearSearch() {
+    document.getElementById('article-search').value = '';
+    document.getElementById('search-clear').classList.add('hidden');
+    applyFilters();
+  }
+
+  function clearAllFilters() {
+    ['article-search','level-filter','lang-filter','status-filter'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+    });
+    document.getElementById('search-clear').classList.add('hidden');
+    applyFilters();
+  }
+
+  document.getElementById('article-search').addEventListener('input', function() {
+    document.getElementById('search-clear').classList.toggle('hidden', !this.value);
+    applyFilters();
+  });
+  ['level-filter','lang-filter','status-filter','sort-filter'].forEach(id => {
+    document.getElementById(id).addEventListener('change', applyFilters);
+  });
+
+  function removeArticle(id, btn) {
+    if (!confirm('Remove this article from your library?')) return;
+    fetch('/library/remove', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    }).then(() => {
+      btn.closest('.article-card, .article-card-list').remove();
+      applyFilters();
+    });
+  }
+</script>
